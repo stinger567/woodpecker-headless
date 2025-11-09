@@ -20,7 +20,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"net/http/httputil"
 	"net/url"
 	"strings"
 	"time"
@@ -38,9 +37,7 @@ import (
 	"go.woodpecker-ci.org/woodpecker/v3/server/router"
 	"go.woodpecker-ci.org/woodpecker/v3/server/router/middleware"
 	"go.woodpecker-ci.org/woodpecker/v3/server/store"
-	"go.woodpecker-ci.org/woodpecker/v3/server/web"
 	"go.woodpecker-ci.org/woodpecker/v3/shared/logger"
-	"go.woodpecker-ci.org/woodpecker/v3/version"
 )
 
 const (
@@ -120,7 +117,7 @@ func run(ctx context.Context, c *cli.Command) error {
 	// wait for all services until one do stops with an error
 	serviceWaitingGroup := errgroup.Group{}
 
-	log.Info().Msgf("starting Woodpecker server with version '%s'", version.String())
+	log.Info().Msgf("starting Woodpecker server with version '%s'", "0.0.0")
 
 	startMetricsCollector(ctx, _store)
 
@@ -145,33 +142,8 @@ func run(ctx context.Context, c *cli.Command) error {
 		return nil
 	})
 
-	proxyWebUI := c.String("www-proxy")
-	var webUIServe func(w http.ResponseWriter, r *http.Request)
-
-	if proxyWebUI == "" {
-		webEngine, err := web.New()
-		if err != nil {
-			log.Error().Err(err).Msg("failed to create web engine")
-			return err
-		}
-		webUIServe = webEngine.ServeHTTP
-	} else {
-		origin, _ := url.Parse(proxyWebUI)
-
-		director := func(req *http.Request) {
-			req.Header.Add("X-Forwarded-Host", req.Host)
-			req.Header.Add("X-Origin-Host", origin.Host)
-			req.URL.Scheme = origin.Scheme
-			req.URL.Host = origin.Host
-		}
-
-		proxy := &httputil.ReverseProxy{Director: director}
-		webUIServe = proxy.ServeHTTP
-	}
-
 	// setup the server and start the listener
 	handler := router.Load(
-		webUIServe,
 		middleware.Logger(time.RFC3339, true),
 		middleware.Version,
 		middleware.Store(_store),

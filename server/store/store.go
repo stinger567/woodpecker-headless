@@ -15,8 +15,6 @@
 package store
 
 import (
-	"context"
-
 	"go.woodpecker-ci.org/woodpecker/v3/server/model"
 )
 
@@ -206,5 +204,4 @@ type Store interface {
 	// Store operations
 	Ping() error
 	Close() error
-	Migrate(context.Context, bool) error
 }

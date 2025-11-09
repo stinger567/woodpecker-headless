@@ -16,12 +16,10 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
-
-	"go.woodpecker-ci.org/woodpecker/v3/version"
 )
 
 // Version is a middleware function that appends the Woodpecker version information
 // to the HTTP response. This is intended for debugging and troubleshooting.
 func Version(c *gin.Context) {
-	c.Header("X-WOODPECKER-VERSION", version.String())
+	c.Header("X-WOODPECKER-VERSION", "0.0.0")
 }

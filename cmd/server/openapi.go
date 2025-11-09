@@ -16,7 +16,6 @@ package main
 
 import (
 	"go.woodpecker-ci.org/woodpecker/v3/cmd/server/openapi"
-	"go.woodpecker-ci.org/woodpecker/v3/version"
 )
 
 // Generate docs/openapi.json via:
@@ -34,5 +33,5 @@ import (
 //	@contact.name	Woodpecker CI
 //	@contact.url	https://woodpecker-ci.org/
 func setupOpenAPIStaticConfig() {
-	openapi.SwaggerInfo.Version = version.String()
+	openapi.SwaggerInfo.Version = "0.0.0"
 }

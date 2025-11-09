@@ -21,7 +21,6 @@ import (
 
 	"go.woodpecker-ci.org/woodpecker/v3/pipeline/frontend/metadata"
 	"go.woodpecker-ci.org/woodpecker/v3/server/model"
-	"go.woodpecker-ci.org/woodpecker/v3/version"
 )
 
 // MetadataFromStruct return the metadata from a pipeline will run with.
@@ -89,7 +88,7 @@ func MetadataFromStruct(forge metadata.ServerForge, repo *model.Repo, pipeline, 
 			URL:      sysURL,
 			Host:     host,
 			Platform: "", // will be set by pipeline platform option or by agent
-			Version:  version.Version,
+			Version:  "0.0.0",
 		},
 		Forge: fForge,
 	}

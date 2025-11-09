@@ -28,7 +28,6 @@ import (
 	"go.woodpecker-ci.org/woodpecker/v3/server/pubsub"
 	"go.woodpecker-ci.org/woodpecker/v3/server/queue"
 	"go.woodpecker-ci.org/woodpecker/v3/server/store"
-	"go.woodpecker-ci.org/woodpecker/v3/version"
 )
 
 // WoodpeckerServer is a grpc server implementation.
@@ -62,7 +61,7 @@ func NewWoodpeckerServer(queue queue.Queue, logger logging.Log, pubsub *pubsub.P
 func (s *WoodpeckerServer) Version(_ context.Context, _ *proto.Empty) (*proto.VersionResponse, error) {
 	return &proto.VersionResponse{
 		GrpcVersion:   proto.Version,
-		ServerVersion: version.String(),
+		ServerVersion: "0.0.0",
 	}, nil
 }
 

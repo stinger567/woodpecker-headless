@@ -26,7 +26,6 @@ import (
 
 	_ "go.woodpecker-ci.org/woodpecker/v3/cmd/server/openapi"
 	"go.woodpecker-ci.org/woodpecker/v3/shared/utils"
-	"go.woodpecker-ci.org/woodpecker/v3/version"
 )
 
 func main() {
@@ -36,7 +35,6 @@ func main() {
 
 	app := cli.Command{}
 	app.Name = "woodpecker-server"
-	app.Version = version.String()
 	app.Usage = "woodpecker server"
 	app.Action = run
 	app.Commands = []*cli.Command{

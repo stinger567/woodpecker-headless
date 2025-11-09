@@ -53,7 +53,6 @@ const (
 
 func setupStore(ctx context.Context, c *cli.Command) (store.Store, error) {
 	datasource := c.String("db-datasource")
-	driver := c.String("db-driver")
 	xorm := store.XORM{
 		Log:             c.Bool("db-log"),
 		ShowSQL:         c.Bool("db-log-sql"),
@@ -62,30 +61,10 @@ func setupStore(ctx context.Context, c *cli.Command) (store.Store, error) {
 		ConnMaxLifetime: c.Duration("db-max-connection-timeout"),
 	}
 
-	if driver == "sqlite3" {
-		if datastore.SupportedDriver("sqlite3") {
-			log.Debug().Msg("server has sqlite3 support")
-		} else {
-			log.Debug().Msg("server was built without sqlite3 support!")
-		}
-	}
-
-	if !datastore.SupportedDriver(driver) {
-		return nil, fmt.Errorf("database driver '%s' not supported", driver)
-	}
-
-	if driver == "sqlite3" {
-		if err := checkSqliteFileExist(datasource); err != nil {
-			return nil, fmt.Errorf("check sqlite file: %w", err)
-		}
-	}
-
 	opts := &store.Opts{
-		Driver: driver,
 		Config: datasource,
 		XORM:   xorm,
 	}
-	log.Debug().Str("driver", driver).Any("xorm", xorm).Msg("setting up datastore")
 	store, err := datastore.NewEngine(opts)
 	if err != nil {
 		return nil, fmt.Errorf("could not open datastore: %w", err)
@@ -93,10 +72,6 @@ func setupStore(ctx context.Context, c *cli.Command) (store.Store, error) {
 
 	if err = store.Ping(); err != nil {
 		return nil, err
-	}
-
-	if err := store.Migrate(ctx, c.Bool("migrations-allow-long")); err != nil {
-		return nil, fmt.Errorf("could not migrate datastore: %w", err)
 	}
 
 	return store, nil

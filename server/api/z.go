@@ -22,7 +22,6 @@ import (
 	"github.com/rs/zerolog/log"
 
 	"go.woodpecker-ci.org/woodpecker/v3/server/store"
-	"go.woodpecker-ci.org/woodpecker/v3/version"
 )
 
 // Health
@@ -53,7 +52,7 @@ func Health(c *gin.Context) {
 func Version(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"source":  "https://github.com/woodpecker-ci/woodpecker",
-		"version": version.String(),
+		"version": "0.0.0",
 	})
 }
 

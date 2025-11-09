@@ -30,11 +30,10 @@ import (
 	"go.woodpecker-ci.org/woodpecker/v3/server/router/middleware/header"
 	"go.woodpecker-ci.org/woodpecker/v3/server/router/middleware/session"
 	"go.woodpecker-ci.org/woodpecker/v3/server/router/middleware/token"
-	"go.woodpecker-ci.org/woodpecker/v3/server/web"
 )
 
 // Load loads the router.
-func Load(noRouteHandler http.HandlerFunc, middleware ...gin.HandlerFunc) http.Handler {
+func Load(middleware ...gin.HandlerFunc) http.Handler {
 	e := gin.New()
 	e.UseRawPath = true
 	e.Use(gin.Recovery())
@@ -51,11 +50,8 @@ func Load(noRouteHandler http.HandlerFunc, middleware ...gin.HandlerFunc) http.H
 	e.Use(session.SetUser())
 	e.Use(token.Refresh)
 
-	e.NoRoute(gin.WrapF(noRouteHandler))
-
 	base := e.Group(server.Config.Server.RootPath)
 	{
-		base.GET("/web-config.js", web.Config)
 
 		base.GET("/logout", api.GetLogout)
 		auth := base.Group("/authorize")

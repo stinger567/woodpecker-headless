@@ -16,14 +16,10 @@ package router
 
 import (
 	"net/http"
-	"net/url"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
-	openapi_files "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 
-	"go.woodpecker-ci.org/woodpecker/v3/cmd/server/openapi"
 	"go.woodpecker-ci.org/woodpecker/v3/server"
 	"go.woodpecker-ci.org/woodpecker/v3/server/api"
 	"go.woodpecker-ci.org/woodpecker/v3/server/api/metrics"
@@ -65,20 +61,6 @@ func Load(middleware ...gin.HandlerFunc) http.Handler {
 	}
 
 	apiRoutes(base)
-	if server.Config.WebUI.EnableSwagger {
-		setupSwaggerConfigAndRoutes(e)
-	}
 
 	return e
-}
-
-func setupSwaggerConfigAndRoutes(e *gin.Engine) {
-	openapi.SwaggerInfo.Host = getHost(server.Config.Server.Host)
-	openapi.SwaggerInfo.BasePath = server.Config.Server.RootPath + "/api"
-	e.GET(server.Config.Server.RootPath+"/swagger/*any", ginSwagger.WrapHandler(openapi_files.Handler))
-}
-
-func getHost(s string) string {
-	parse, _ := url.Parse(s)
-	return parse.Host
 }

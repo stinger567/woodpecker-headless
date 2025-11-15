@@ -31,7 +31,6 @@ func TestGetPipelineQueue(t *testing.T) {
 		Email:       "foo@bar.com",
 		AccessToken: "e42080dddf012c718e476da161d21ad5",
 	}
-	assert.NoError(t, store.CreateUser(user))
 
 	repo1 := &model.Repo{
 		Owner:         "bradrydzewski",
@@ -90,7 +89,6 @@ func TestUserFeed(t *testing.T) {
 		Email:       "foo@bar.com",
 		AccessToken: "e42080dddf012c718e476da161d21ad5",
 	}
-	assert.NoError(t, store.CreateUser(user))
 
 	repo1 := &model.Repo{
 		Owner:         "bradrydzewski",
@@ -136,7 +134,6 @@ func TestRepoListLatest(t *testing.T) {
 		Email:       "foo@bar.com",
 		AccessToken: "e42080dddf012c718e476da161d21ad5",
 	}
-	assert.NoError(t, store.CreateUser(user))
 
 	repo1 := &model.Repo{
 		ID:            1,

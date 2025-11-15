@@ -46,7 +46,6 @@ import (
 	"go.woodpecker-ci.org/woodpecker/v3/pipeline/rpc"
 	"go.woodpecker-ci.org/woodpecker/v3/shared/logger"
 	"go.woodpecker-ci.org/woodpecker/v3/shared/utils"
-	"go.woodpecker-ci.org/woodpecker/v3/version"
 )
 
 const (
@@ -65,7 +64,7 @@ var (
 )
 
 func run(ctx context.Context, c *cli.Command, backends []types.Backend) error {
-	log.Info().Str("version", version.String()).Msg("Starting Woodpecker agent")
+	log.Info().Msg("Starting Woodpecker agent")
 
 	agentCtx, ctxCancel := context.WithCancelCause(ctx)
 	stopAgentFunc = func(err error) {
@@ -212,7 +211,6 @@ func run(ctx context.Context, c *cli.Command, backends []types.Backend) error {
 	}
 
 	agentConfig.AgentID, err = client.RegisterAgent(grpcCtx, rpc.AgentInfo{ //nolint:contextcheck
-		Version:      version.String(),
 		Backend:      backendEngine.Name(),
 		Platform:     engInfo.Platform,
 		Capacity:     maxWorkflows,
@@ -316,8 +314,8 @@ func run(ctx context.Context, c *cli.Command, backends []types.Backend) error {
 	}
 
 	log.Info().Msgf(
-		"starting Woodpecker agent with version '%s' and backend '%s' using platform '%s' running up to %d pipelines in parallel",
-		version.String(), backendEngine.Name(), engInfo.Platform, maxWorkflows)
+		"starting Woodpecker agent and backend '%s' using platform '%s' running up to %d pipelines in parallel",
+		backendEngine.Name(), engInfo.Platform, maxWorkflows)
 
 	return serviceWaitingGroup.Wait()
 }

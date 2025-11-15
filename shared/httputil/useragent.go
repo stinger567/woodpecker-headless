@@ -17,8 +17,6 @@ package httputil
 import (
 	"fmt"
 	"net/http"
-
-	"go.woodpecker-ci.org/woodpecker/v3/version"
 )
 
 // UserAgentRoundTripper is an http.RoundTripper that sets a custom User-Agent header
@@ -35,7 +33,7 @@ func NewUserAgentRoundTripper(base http.RoundTripper, component string) *UserAge
 		base = http.DefaultTransport
 	}
 
-	userAgent := fmt.Sprintf("Woodpecker/%s", version.String())
+	userAgent := "Woodpecker"
 	if component != "" {
 		userAgent = fmt.Sprintf("%s (%s)", userAgent, component)
 	}

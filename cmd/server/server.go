@@ -145,7 +145,6 @@ func run(ctx context.Context, c *cli.Command) error {
 	// setup the server and start the listener
 	handler := router.Load(
 		middleware.Logger(time.RFC3339, true),
-		middleware.Version,
 		middleware.Store(_store),
 	)
 

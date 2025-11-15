@@ -16,7 +16,6 @@ package core
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
@@ -25,7 +24,6 @@ import (
 	"github.com/urfave/cli/v3"
 
 	"go.woodpecker-ci.org/woodpecker/v3/agent"
-	"go.woodpecker-ci.org/woodpecker/v3/version"
 )
 
 // The file implements some basic healthcheck logic based on the
@@ -35,7 +33,6 @@ import (
 func initHealth() {
 	http.HandleFunc("/varz", handleStats)
 	http.HandleFunc("/healthz", handleHeartbeat)
-	http.HandleFunc("/version", handleVersion)
 }
 
 func handleHeartbeat(w http.ResponseWriter, _ *http.Request) {
@@ -43,18 +40,6 @@ func handleHeartbeat(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	} else {
 		w.WriteHeader(http.StatusInternalServerError)
-	}
-}
-
-func handleVersion(w http.ResponseWriter, _ *http.Request) {
-	w.WriteHeader(http.StatusOK)
-	w.Header().Add("Content-Type", "text/json")
-	err := json.NewEncoder(w).Encode(versionResp{
-		Source:  "https://github.com/woodpecker-ci/woodpecker",
-		Version: version.String(),
-	})
-	if err != nil {
-		log.Error().Err(err).Msg("handleVersion")
 	}
 }
 
@@ -68,11 +53,6 @@ func handleStats(w http.ResponseWriter, _ *http.Request) {
 	if _, err := counter.WriteTo(w); err != nil {
 		log.Error().Err(err).Msg("handleStats")
 	}
-}
-
-type versionResp struct {
-	Version string `json:"version"`
-	Source  string `json:"source"`
 }
 
 // Default statistics counter.

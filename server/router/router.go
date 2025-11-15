@@ -61,7 +61,6 @@ func Load(middleware ...gin.HandlerFunc) http.Handler {
 		}
 
 		base.GET("/metrics", metrics.PromHandler())
-		base.GET("/version", api.Version)
 		base.GET("/healthz", api.Health)
 	}
 

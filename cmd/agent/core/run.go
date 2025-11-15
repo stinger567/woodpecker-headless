@@ -26,13 +26,11 @@ import (
 	backend "go.woodpecker-ci.org/woodpecker/v3/pipeline/backend/types"
 	"go.woodpecker-ci.org/woodpecker/v3/shared/logger"
 	"go.woodpecker-ci.org/woodpecker/v3/shared/utils"
-	"go.woodpecker-ci.org/woodpecker/v3/version"
 )
 
 func RunAgent(ctx context.Context, backends []backend.Backend) {
 	app := &cli.Command{}
 	app.Name = "woodpecker-agent"
-	app.Version = version.String()
 	app.Usage = "woodpecker agent"
 	app.Action = runWithRetry(backends)
 	app.Commands = []*cli.Command{

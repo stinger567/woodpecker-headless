@@ -15,14 +15,11 @@
 package httputil
 
 import (
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-
-	"go.woodpecker-ci.org/woodpecker/v3/version"
 )
 
 func TestNewUserAgentRoundTripper(t *testing.T) {
@@ -30,14 +27,14 @@ func TestNewUserAgentRoundTripper(t *testing.T) {
 		rt := NewUserAgentRoundTripper(nil, "test-component")
 		assert.NotNil(t, rt)
 		assert.NotNil(t, rt.base)
-		expectedUA := fmt.Sprintf("Woodpecker/%s (test-component)", version.String())
+		expectedUA := "Woodpecker (test-component)"
 		assert.Equal(t, expectedUA, rt.userAgent)
 	})
 
 	t.Run("without component", func(t *testing.T) {
 		rt := NewUserAgentRoundTripper(nil, "")
 		assert.NotNil(t, rt)
-		expectedUA := fmt.Sprintf("Woodpecker/%s", version.String())
+		expectedUA := "Woodpecker"
 		assert.Equal(t, expectedUA, rt.userAgent)
 	})
 
@@ -71,7 +68,7 @@ func TestUserAgentRoundTripper_RoundTrip(t *testing.T) {
 		assert.NotNil(t, resp)
 		defer resp.Body.Close()
 
-		expectedUA := fmt.Sprintf("Woodpecker/%s (agent)", version.String())
+		expectedUA := "Woodpecker (agent)"
 		assert.Equal(t, expectedUA, capturedUserAgent)
 	})
 

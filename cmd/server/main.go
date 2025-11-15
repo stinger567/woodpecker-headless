@@ -24,7 +24,6 @@ import (
 	"github.com/rs/zerolog/log"
 	"github.com/urfave/cli/v3"
 
-	_ "go.woodpecker-ci.org/woodpecker/v3/cmd/server/openapi"
 	"go.woodpecker-ci.org/woodpecker/v3/shared/utils"
 )
 
@@ -45,8 +44,6 @@ func main() {
 		},
 	}
 	app.Flags = flags
-
-	setupOpenAPIStaticConfig()
 
 	if err := app.Run(ctx, os.Args); err != nil {
 		log.Error().Err(err).Msgf("error running server")

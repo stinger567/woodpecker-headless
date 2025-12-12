@@ -86,23 +86,23 @@ func (c *combined) RegistryDelete(repo *model.Repo, addr string) error {
 	return c.dbRegistry.RegistryDelete(repo, addr)
 }
 
-func (c *combined) OrgRegistryFind(owner int64, addr string) (*model.Registry, error) {
+func (c *combined) OrgRegistryFind(owner string, addr string) (*model.Registry, error) {
 	return c.dbRegistry.OrgRegistryFind(owner, addr)
 }
 
-func (c *combined) OrgRegistryList(owner int64, p *model.ListOptions) ([]*model.Registry, error) {
+func (c *combined) OrgRegistryList(owner string, p *model.ListOptions) ([]*model.Registry, error) {
 	return c.dbRegistry.OrgRegistryList(owner, p)
 }
 
-func (c *combined) OrgRegistryCreate(owner int64, registry *model.Registry) error {
+func (c *combined) OrgRegistryCreate(owner string, registry *model.Registry) error {
 	return c.dbRegistry.OrgRegistryCreate(owner, registry)
 }
 
-func (c *combined) OrgRegistryUpdate(owner int64, registry *model.Registry) error {
+func (c *combined) OrgRegistryUpdate(owner string, registry *model.Registry) error {
 	return c.dbRegistry.OrgRegistryUpdate(owner, registry)
 }
 
-func (c *combined) OrgRegistryDelete(owner int64, addr string) error {
+func (c *combined) OrgRegistryDelete(owner string, addr string) error {
 	return c.dbRegistry.OrgRegistryDelete(owner, addr)
 }
 

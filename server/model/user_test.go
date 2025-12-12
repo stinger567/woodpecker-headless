@@ -22,39 +22,39 @@ import (
 
 func TestUserValidate(t *testing.T) {
 	tests := []struct {
-		user User
+		user Account
 		err  error
 	}{
 		{
-			user: User{},
+			user: Account{},
 			err:  errUserLoginInvalid,
 		},
 		{
-			user: User{Login: "octocat!"},
+			user: Account{AccountName: "octocat!"},
 			err:  errUserLoginInvalid,
 		},
 		{
-			user: User{Login: "!octocat"},
+			user: Account{AccountName: "!octocat"},
 			err:  errUserLoginInvalid,
 		},
 		{
-			user: User{Login: "john$smith"},
+			user: Account{AccountName: "john$smith"},
 			err:  errUserLoginInvalid,
 		},
 		{
-			user: User{Login: "octocat"},
+			user: Account{AccountName: "octocat"},
 			err:  nil,
 		},
 		{
-			user: User{Login: "john-smith"},
+			user: Account{AccountName: "john-smith"},
 			err:  nil,
 		},
 		{
-			user: User{Login: "john_smith"},
+			user: Account{AccountName: "john_smith"},
 			err:  nil,
 		},
 		{
-			user: User{Login: "john.smith"},
+			user: Account{AccountName: "john.smith"},
 			err:  nil,
 		},
 	}

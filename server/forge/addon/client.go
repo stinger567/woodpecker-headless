@@ -77,7 +77,7 @@ func (g *RPC) URL() string {
 	return resp
 }
 
-func (g *RPC) Login(_ context.Context, r *types.OAuthRequest) (*model.User, string, error) {
+func (g *RPC) Login(_ context.Context, r *types.OAuthRequest) (*model.Account, string, error) {
 	args, err := json.Marshal(r)
 	if err != nil {
 		return nil, "", err
@@ -109,7 +109,7 @@ func (g *RPC) Auth(_ context.Context, token, secret string) (string, error) {
 	return resp, g.client.Call("Plugin.Auth", args, &resp)
 }
 
-func (g *RPC) Teams(_ context.Context, u *model.User, p *model.ListOptions) ([]*model.Team, error) {
+func (g *RPC) Teams(_ context.Context, u *model.Account, p *model.ListOptions) ([]*model.Team, error) {
 	args, err := json.Marshal(&argumentsTeams{
 		U: modelUserFromModel(u),
 		P: p,
@@ -127,7 +127,7 @@ func (g *RPC) Teams(_ context.Context, u *model.User, p *model.ListOptions) ([]*
 	return resp, json.Unmarshal(jsonResp, &resp)
 }
 
-func (g *RPC) Repo(_ context.Context, u *model.User, remoteID model.ForgeRemoteID, owner, name string) (*model.Repo, error) {
+func (g *RPC) Repo(_ context.Context, u *model.Account, remoteID model.ForgeRemoteID, owner, name string) (*model.Repo, error) {
 	args, err := json.Marshal(&argumentsRepo{
 		U:        modelUserFromModel(u),
 		RemoteID: remoteID,
@@ -151,7 +151,7 @@ func (g *RPC) Repo(_ context.Context, u *model.User, remoteID model.ForgeRemoteI
 	return resp.asModel(), nil
 }
 
-func (g *RPC) Repos(_ context.Context, u *model.User, p *model.ListOptions) ([]*model.Repo, error) {
+func (g *RPC) Repos(_ context.Context, u *model.Account, p *model.ListOptions) ([]*model.Repo, error) {
 	args, err := json.Marshal(&argumentsRepos{
 		U: modelUserFromModel(u),
 		P: p,
@@ -177,7 +177,7 @@ func (g *RPC) Repos(_ context.Context, u *model.User, p *model.ListOptions) ([]*
 	return modelRepos, nil
 }
 
-func (g *RPC) File(_ context.Context, u *model.User, r *model.Repo, b *model.Pipeline, f string) ([]byte, error) {
+func (g *RPC) File(_ context.Context, u *model.Account, r *model.Repo, b *model.Pipeline, f string) ([]byte, error) {
 	args, err := json.Marshal(&argumentsFileDir{
 		U: modelUserFromModel(u),
 		R: modelRepoFromModel(r),
@@ -191,7 +191,7 @@ func (g *RPC) File(_ context.Context, u *model.User, r *model.Repo, b *model.Pip
 	return resp, g.client.Call("Plugin.File", args, &resp)
 }
 
-func (g *RPC) Dir(_ context.Context, u *model.User, r *model.Repo, b *model.Pipeline, f string) ([]*types.FileMeta, error) {
+func (g *RPC) Dir(_ context.Context, u *model.Account, r *model.Repo, b *model.Pipeline, f string) ([]*types.FileMeta, error) {
 	args, err := json.Marshal(&argumentsFileDir{
 		U: modelUserFromModel(u),
 		R: modelRepoFromModel(r),
@@ -210,7 +210,7 @@ func (g *RPC) Dir(_ context.Context, u *model.User, r *model.Repo, b *model.Pipe
 	return resp, json.Unmarshal(jsonResp, &resp)
 }
 
-func (g *RPC) Status(_ context.Context, u *model.User, r *model.Repo, b *model.Pipeline, p *model.Workflow) error {
+func (g *RPC) Status(_ context.Context, u *model.Account, r *model.Repo, b *model.Pipeline, p *model.Workflow) error {
 	args, err := json.Marshal(&argumentsStatus{
 		U: modelUserFromModel(u),
 		R: modelRepoFromModel(r),
@@ -224,7 +224,7 @@ func (g *RPC) Status(_ context.Context, u *model.User, r *model.Repo, b *model.P
 	return g.client.Call("Plugin.Status", args, &jsonResp)
 }
 
-func (g *RPC) Netrc(u *model.User, r *model.Repo) (*model.Netrc, error) {
+func (g *RPC) Netrc(u *model.Account, r *model.Repo) (*model.Netrc, error) {
 	args, err := json.Marshal(&argumentsNetrc{
 		U: modelUserFromModel(u),
 		R: modelRepoFromModel(r),
@@ -241,7 +241,7 @@ func (g *RPC) Netrc(u *model.User, r *model.Repo) (*model.Netrc, error) {
 	return resp, json.Unmarshal(jsonResp, &resp)
 }
 
-func (g *RPC) Activate(_ context.Context, u *model.User, r *model.Repo, link string) error {
+func (g *RPC) Activate(_ context.Context, u *model.Account, r *model.Repo, link string) error {
 	args, err := json.Marshal(&argumentsActivateDeactivate{
 		U:    modelUserFromModel(u),
 		R:    modelRepoFromModel(r),
@@ -254,7 +254,7 @@ func (g *RPC) Activate(_ context.Context, u *model.User, r *model.Repo, link str
 	return g.client.Call("Plugin.Activate", args, &jsonResp)
 }
 
-func (g *RPC) Deactivate(_ context.Context, u *model.User, r *model.Repo, link string) error {
+func (g *RPC) Deactivate(_ context.Context, u *model.Account, r *model.Repo, link string) error {
 	args, err := json.Marshal(&argumentsActivateDeactivate{
 		U:    modelUserFromModel(u),
 		R:    modelRepoFromModel(r),
@@ -267,7 +267,7 @@ func (g *RPC) Deactivate(_ context.Context, u *model.User, r *model.Repo, link s
 	return g.client.Call("Plugin.Deactivate", args, &jsonResp)
 }
 
-func (g *RPC) Branches(_ context.Context, u *model.User, r *model.Repo, p *model.ListOptions) ([]string, error) {
+func (g *RPC) Branches(_ context.Context, u *model.Account, r *model.Repo, p *model.ListOptions) ([]string, error) {
 	args, err := json.Marshal(&argumentsBranchesPullRequests{
 		U: modelUserFromModel(u),
 		R: modelRepoFromModel(r),
@@ -285,7 +285,7 @@ func (g *RPC) Branches(_ context.Context, u *model.User, r *model.Repo, p *model
 	return resp, json.Unmarshal(jsonResp, &resp)
 }
 
-func (g *RPC) BranchHead(_ context.Context, u *model.User, r *model.Repo, branch string) (*model.Commit, error) {
+func (g *RPC) BranchHead(_ context.Context, u *model.Account, r *model.Repo, branch string) (*model.Commit, error) {
 	args, err := json.Marshal(&argumentsBranchHead{
 		U:      modelUserFromModel(u),
 		R:      modelRepoFromModel(r),
@@ -303,7 +303,7 @@ func (g *RPC) BranchHead(_ context.Context, u *model.User, r *model.Repo, branch
 	return resp, json.Unmarshal(jsonResp, &resp)
 }
 
-func (g *RPC) PullRequests(_ context.Context, u *model.User, r *model.Repo, p *model.ListOptions) ([]*model.PullRequest, error) {
+func (g *RPC) PullRequests(_ context.Context, u *model.Account, r *model.Repo, p *model.ListOptions) ([]*model.PullRequest, error) {
 	args, err := json.Marshal(&argumentsBranchesPullRequests{
 		U: modelUserFromModel(u),
 		R: modelRepoFromModel(r),
@@ -349,7 +349,7 @@ func (g *RPC) Hook(_ context.Context, r *http.Request) (*model.Repo, *model.Pipe
 	return resp.Repo.asModel(), resp.Pipeline, nil
 }
 
-func (g *RPC) OrgMembership(_ context.Context, u *model.User, org string) (*model.OrgPerm, error) {
+func (g *RPC) OrgMembership(_ context.Context, u *model.Account, org string) (*model.OrgPerm, error) {
 	args, err := json.Marshal(&argumentsOrgMembershipOrg{
 		U:   modelUserFromModel(u),
 		Org: org,
@@ -366,7 +366,7 @@ func (g *RPC) OrgMembership(_ context.Context, u *model.User, org string) (*mode
 	return resp, json.Unmarshal(jsonResp, &resp)
 }
 
-func (g *RPC) Org(_ context.Context, u *model.User, org string) (*model.Org, error) {
+func (g *RPC) Org(_ context.Context, u *model.Account, org string) (*model.Org, error) {
 	args, err := json.Marshal(&argumentsOrgMembershipOrg{
 		U:   modelUserFromModel(u),
 		Org: org,

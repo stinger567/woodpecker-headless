@@ -18,8 +18,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 
 	"go.woodpecker-ci.org/woodpecker/v3/server/store"
 )
@@ -54,48 +52,4 @@ func Version(c *gin.Context) {
 		"source":  "https://github.com/woodpecker-ci/woodpecker",
 		"version": "0.0.0",
 	})
-}
-
-// LogLevel
-//
-//	@Summary		Current log level
-//	@Description	Endpoint returns the current logging level. Requires admin rights.
-//	@Router			/log-level [get]
-//	@Produce		json
-//	@Success		200	{object}	object{log-level=string}
-//	@Tags			System
-func LogLevel(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"log-level": zerolog.GlobalLevel().String(),
-	})
-}
-
-// SetLogLevel
-//
-//	@Summary		Set log level
-//	@Description	Endpoint sets the current logging level. Requires admin rights.
-//	@Router			/log-level [post]
-//	@Produce		json
-//	@Success		200	{object}	object{log-level=string}
-//	@Tags			System
-//	@Param			Authorization	header	string						true	"Insert your personal access token"	default(Bearer <personal access token>)
-//	@Param			log-level		body	object{log-level=string}	true	"the new log level, one of <debug,trace,info,warn,error,fatal,panic,disabled>"
-func SetLogLevel(c *gin.Context) {
-	logLevel := struct {
-		LogLevel string `json:"log-level"`
-	}{}
-	if err := c.Bind(&logLevel); err != nil {
-		_ = c.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
-
-	lvl, err := zerolog.ParseLevel(logLevel.LogLevel)
-	if err != nil {
-		_ = c.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
-
-	log.Log().Msgf("log level set to %s", lvl.String())
-	zerolog.SetGlobalLevel(lvl)
-	c.JSON(http.StatusOK, logLevel)
 }

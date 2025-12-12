@@ -21,7 +21,7 @@ import (
 )
 
 type ErrorRepoNotExist struct {
-	RepoID int64
+	RepoID string
 }
 
 func (e ErrorRepoNotExist) Error() string {

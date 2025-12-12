@@ -85,23 +85,23 @@ func (d *db) RegistryDelete(repo *model.Repo, addr string) error {
 	return d.store.RegistryDelete(registry)
 }
 
-func (d *db) OrgRegistryFind(owner int64, name string) (*model.Registry, error) {
+func (d *db) OrgRegistryFind(owner string, name string) (*model.Registry, error) {
 	return d.store.OrgRegistryFind(owner, name)
 }
 
-func (d *db) OrgRegistryList(owner int64, p *model.ListOptions) ([]*model.Registry, error) {
+func (d *db) OrgRegistryList(owner string, p *model.ListOptions) ([]*model.Registry, error) {
 	return d.store.OrgRegistryList(owner, p)
 }
 
-func (d *db) OrgRegistryCreate(_ int64, in *model.Registry) error {
+func (d *db) OrgRegistryCreate(_ string, in *model.Registry) error {
 	return d.store.RegistryCreate(in)
 }
 
-func (d *db) OrgRegistryUpdate(_ int64, in *model.Registry) error {
+func (d *db) OrgRegistryUpdate(_ string, in *model.Registry) error {
 	return d.store.RegistryUpdate(in)
 }
 
-func (d *db) OrgRegistryDelete(owner int64, addr string) error {
+func (d *db) OrgRegistryDelete(owner string, addr string) error {
 	registry, err := d.store.OrgRegistryFind(owner, addr)
 	if err != nil {
 		return err

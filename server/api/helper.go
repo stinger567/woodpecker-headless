@@ -54,7 +54,7 @@ func handleDBError(c *gin.Context, err error) {
 
 // If the forge has a refresh token, the current access token may be stale.
 // Therefore, we should refresh prior to dispatching the job.
-func refreshUserToken(c *gin.Context, user *model.User) {
+func refreshUserToken(c *gin.Context, user *model.Account) {
 	_store := store.FromContext(c)
 	_forge, err := server.Config.Services.Manager.ForgeFromUser(user)
 	if err != nil {

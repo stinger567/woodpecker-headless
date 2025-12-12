@@ -23,7 +23,7 @@ import (
 )
 
 func TestForgeCRUD(t *testing.T) {
-	store, closer := newTestStore(t, new(model.Forge), new(model.Repo), new(model.User))
+	store, closer := newTestStore(t, new(model.Forge), new(model.Repo), new(model.Account))
 	defer closer()
 
 	forge1 := &model.Forge{

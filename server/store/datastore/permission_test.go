@@ -23,16 +23,16 @@ import (
 )
 
 func TestPermFind(t *testing.T) {
-	store, closer := newTestStore(t, new(model.Repo), new(model.Perm), new(model.User))
+	store, closer := newTestStore(t, new(model.Repo), new(model.Perm), new(model.Account))
 	defer closer()
 
-	user := &model.User{ID: 1}
+	user := &model.Account{ID: "1"}
 	repo := &model.Repo{
-		UserID:        1,
-		FullName:      "bradrydzewski/test",
-		Owner:         "bradrydzewski",
-		Name:          "test",
-		ForgeRemoteID: "1",
+		ForgeAccountID: 1,
+		FullName:       "bradrydzewski/test",
+		Owner:          "bradrydzewski",
+		Name:           "test",
+		ForgeRemoteID:  "1",
 	}
 	assert.NoError(t, store.CreateRepo(repo))
 
@@ -56,16 +56,16 @@ func TestPermFind(t *testing.T) {
 }
 
 func TestPermUpsert(t *testing.T) {
-	store, closer := newTestStore(t, new(model.Repo), new(model.Perm), new(model.User))
+	store, closer := newTestStore(t, new(model.Repo), new(model.Perm), new(model.Account))
 	defer closer()
 
-	user := &model.User{ID: 1}
+	user := &model.Account{ID: "1"}
 	repo := &model.Repo{
-		UserID:        1,
-		FullName:      "bradrydzewski/test",
-		Owner:         "bradrydzewski",
-		Name:          "test",
-		ForgeRemoteID: "1",
+		ForgeAccountID: 1,
+		FullName:       "bradrydzewski/test",
+		Owner:          "bradrydzewski",
+		Name:           "test",
+		ForgeRemoteID:  "1",
 	}
 	assert.NoError(t, store.CreateRepo(repo))
 

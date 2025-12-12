@@ -67,7 +67,7 @@ func TestBitbucket(t *testing.T) {
 		Code: "code",
 	})
 	assert.NoError(t, err)
-	assert.Equal(t, fakeUser.Login, u.Login)
+	assert.Equal(t, fakeUser.AccountName, u.AccountName)
 	assert.Equal(t, "2YotnFZFEjr1zCsicMWpAA", u.AccessToken)
 	assert.Equal(t, "tGzv3JOkF0XG5Qx2TlKWIA", u.RefreshToken)
 
@@ -83,7 +83,7 @@ func TestBitbucket(t *testing.T) {
 
 	login, err := c.Auth(ctx, fakeUser.AccessToken, fakeUser.RefreshToken)
 	assert.NoError(t, err)
-	assert.Equal(t, fakeUser.Login, login)
+	assert.Equal(t, fakeUser.AccountName, login)
 
 	_, err = c.Auth(ctx, fakeUserNotFound.AccessToken, fakeUserNotFound.RefreshToken)
 	assert.Error(t, err)
@@ -219,38 +219,38 @@ func TestBitbucket(t *testing.T) {
 }
 
 var (
-	fakeUser = &model.User{
-		Login:       "superman",
+	fakeUser = &model.Account{
+		AccountName: "superman",
 		AccessToken: "cfcd2084",
 	}
 
-	fakeUserRefresh = &model.User{
-		Login:        "superman",
+	fakeUserRefresh = &model.Account{
+		AccountName:  "superman",
 		RefreshToken: "cfcd2084",
 	}
 
-	fakeUserRefreshFail = &model.User{
-		Login:        "superman",
+	fakeUserRefreshFail = &model.Account{
+		AccountName:  "superman",
 		RefreshToken: "refresh_token_not_found",
 	}
 
-	fakeUserRefreshEmpty = &model.User{
-		Login:        "superman",
+	fakeUserRefreshEmpty = &model.Account{
+		AccountName:  "superman",
 		RefreshToken: "refresh_token_is_empty",
 	}
 
-	fakeUserNotFound = &model.User{
-		Login:       "superman",
+	fakeUserNotFound = &model.Account{
+		AccountName: "superman",
 		AccessToken: "user_not_found",
 	}
 
-	fakeUserNoTeams = &model.User{
-		Login:       "superman",
+	fakeUserNoTeams = &model.Account{
+		AccountName: "superman",
 		AccessToken: "teams_not_found",
 	}
 
-	fakeUserNoRepos = &model.User{
-		Login:       "superman",
+	fakeUserNoRepos = &model.Account{
+		AccountName: "superman",
 		AccessToken: "repos_not_found",
 	}
 
@@ -279,10 +279,10 @@ var (
 	}
 
 	fakeRepoFromHook = &model.Repo{
-		Owner:    "martinherren1984",
-		Name:     "publictestrepo",
-		FullName: "martinherren1984/publictestrepo",
-		UserID:   1,
+		Owner:          "martinherren1984",
+		Name:           "publictestrepo",
+		FullName:       "martinherren1984/publictestrepo",
+		ForgeAccountID: 1,
 	}
 
 	fakePipeline = &model.Pipeline{

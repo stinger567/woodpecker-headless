@@ -33,10 +33,10 @@ func TestConfig(t *testing.T) {
 	defer closer()
 
 	repo := &model.Repo{
-		UserID:   1,
-		FullName: "bradrydzewski/test",
-		Owner:    "bradrydzewski",
-		Name:     "test",
+		ForgeAccountID: 1,
+		FullName:       "bradrydzewski/test",
+		Owner:          "bradrydzewski",
+		Name:           "test",
 	}
 	assert.NoError(t, store.CreateRepo(repo))
 

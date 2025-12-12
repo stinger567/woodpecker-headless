@@ -53,11 +53,6 @@ func startMetricsCollector(ctx context.Context, _store store.Store) {
 		Name:      "pipeline_total_count",
 		Help:      "Total number of pipelines.",
 	})
-	users := prometheus_auto.NewGauge(prometheus.GaugeOpts{
-		Namespace: "woodpecker",
-		Name:      "user_count",
-		Help:      "Total number of users.",
-	})
 	repos := prometheus_auto.NewGauge(prometheus.GaugeOpts{
 		Namespace: "woodpecker",
 		Name:      "repo_count",
@@ -87,13 +82,11 @@ func startMetricsCollector(ctx context.Context, _store store.Store) {
 
 		for {
 			repoCount, repoErr := _store.GetRepoCount()
-			userCount, userErr := _store.GetUserCount()
 			pipelineCount, pipelineErr := _store.GetPipelineCount()
 			pipelines.Set(float64(pipelineCount))
-			users.Set(float64(userCount))
 			repos.Set(float64(repoCount))
 
-			if err := errors.Join(repoErr, userErr, pipelineErr); err != nil {
+			if err := errors.Join(repoErr, pipelineErr); err != nil {
 				log.Error().Err(err).Msg("could not update store information for metrics")
 			}
 

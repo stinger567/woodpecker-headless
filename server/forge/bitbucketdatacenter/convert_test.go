@@ -310,10 +310,8 @@ func Test_convertUser(t *testing.T) {
 		ID:    1,
 	}
 	to := convertUser(from, "https://base.url")
-	assert.Equal(t, &model.User{
-		Login:         "slug",
-		Avatar:        "https://base.url/users/slug/avatar.png",
-		Email:         "john.doe@mail.com",
+	assert.Equal(t, &model.Account{
+		AccountName:   "slug",
 		ForgeRemoteID: "1",
 	}, to)
 }

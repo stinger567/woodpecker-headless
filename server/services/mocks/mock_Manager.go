@@ -267,7 +267,7 @@ func (_c *MockManager_ForgeFromRepo_Call) RunAndReturn(run func(repo *model.Repo
 }
 
 // ForgeFromUser provides a mock function for the type MockManager
-func (_mock *MockManager) ForgeFromUser(user *model.User) (forge.Forge, error) {
+func (_mock *MockManager) ForgeFromUser(user *model.Account) (forge.Forge, error) {
 	ret := _mock.Called(user)
 
 	if len(ret) == 0 {
@@ -276,17 +276,17 @@ func (_mock *MockManager) ForgeFromUser(user *model.User) (forge.Forge, error) {
 
 	var r0 forge.Forge
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(*model.User) (forge.Forge, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(*model.Account) (forge.Forge, error)); ok {
 		return returnFunc(user)
 	}
-	if returnFunc, ok := ret.Get(0).(func(*model.User) forge.Forge); ok {
+	if returnFunc, ok := ret.Get(0).(func(*model.Account) forge.Forge); ok {
 		r0 = returnFunc(user)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(forge.Forge)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(*model.User) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(*model.Account) error); ok {
 		r1 = returnFunc(user)
 	} else {
 		r1 = ret.Error(1)
@@ -305,11 +305,11 @@ func (_e *MockManager_Expecter) ForgeFromUser(user interface{}) *MockManager_For
 	return &MockManager_ForgeFromUser_Call{Call: _e.mock.On("ForgeFromUser", user)}
 }
 
-func (_c *MockManager_ForgeFromUser_Call) Run(run func(user *model.User)) *MockManager_ForgeFromUser_Call {
+func (_c *MockManager_ForgeFromUser_Call) Run(run func(user *model.Account)) *MockManager_ForgeFromUser_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 *model.User
+		var arg0 *model.Account
 		if args[0] != nil {
-			arg0 = args[0].(*model.User)
+			arg0 = args[0].(*model.Account)
 		}
 		run(
 			arg0,
@@ -323,7 +323,7 @@ func (_c *MockManager_ForgeFromUser_Call) Return(forge1 forge.Forge, err error) 
 	return _c
 }
 
-func (_c *MockManager_ForgeFromUser_Call) RunAndReturn(run func(user *model.User) (forge.Forge, error)) *MockManager_ForgeFromUser_Call {
+func (_c *MockManager_ForgeFromUser_Call) RunAndReturn(run func(user *model.Account) (forge.Forge, error)) *MockManager_ForgeFromUser_Call {
 	_c.Call.Return(run)
 	return _c
 }

@@ -97,7 +97,7 @@ func TestBitbucketDC(t *testing.T) {
 }
 
 var (
-	fakeUser = &model.User{
+	fakeUser = &model.Account{
 		AccessToken: "fake",
 		Expiry:      time.Now().Add(1 * time.Hour).Unix(),
 	}

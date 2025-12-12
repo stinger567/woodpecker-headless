@@ -16,7 +16,6 @@ package model
 
 import (
 	"encoding/base32"
-	"fmt"
 
 	"github.com/google/tink/go/subtle/random"
 
@@ -28,7 +27,7 @@ type Agent struct {
 	Created      int64             `json:"created"       xorm:"created"`
 	Updated      int64             `json:"updated"       xorm:"updated"`
 	Name         string            `json:"name"          xorm:"name"`
-	OwnerID      int64             `json:"owner_id"      xorm:"'owner_id'"`
+	OwnerID      string            `json:"owner_id"      xorm:"'owner_id'"`
 	Token        string            `json:"token"         xorm:"token"`
 	LastContact  int64             `json:"last_contact"  xorm:"last_contact"`
 	LastWork     int64             `json:"last_work"     xorm:"last_work"` // last time the agent did something, this value is used to determine if the agent is still doing work used by the autoscaler
@@ -39,11 +38,11 @@ type Agent struct {
 	NoSchedule   bool              `json:"no_schedule"   xorm:"no_schedule"`
 	CustomLabels map[string]string `json:"custom_labels" xorm:"JSON 'custom_labels'"`
 	// OrgID is counted as unset if set to -1, this is done to ensure a new(Agent) still enforce the OrgID check by default
-	OrgID int64 `json:"org_id"        xorm:"INDEX 'org_id'"`
+	OrgID string `json:"org_id"        xorm:"INDEX 'org_id'"`
 } //	@name	Agent
 
 const (
-	IDNotSet = -1
+	IDNotSet = ""
 )
 
 // TableName return database table name for xorm.
@@ -64,7 +63,7 @@ func (a *Agent) GetServerLabels() (map[string]string, error) {
 
 	// enforce filters for user and organization agents
 	if a.OrgID != IDNotSet {
-		filters[pipeline.LabelFilterOrg] = fmt.Sprintf("%d", a.OrgID)
+		filters[pipeline.LabelFilterOrg] = a.OrgID
 	} else {
 		filters[pipeline.LabelFilterOrg] = "*"
 	}

@@ -17,15 +17,15 @@ package model
 
 // Perm defines a repository permission for an individual user.
 type Perm struct {
-	UserID  int64 `json:"-"       xorm:"UNIQUE(s) INDEX NOT NULL 'user_id'"`
-	RepoID  int64 `json:"-"       xorm:"UNIQUE(s) INDEX NOT NULL 'repo_id'"`
-	Repo    *Repo `json:"-"       xorm:"-"`
-	Pull    bool  `json:"pull"    xorm:"pull"`
-	Push    bool  `json:"push"    xorm:"push"`
-	Admin   bool  `json:"admin"   xorm:"admin"`
-	Synced  int64 `json:"synced"  xorm:"synced"`
-	Created int64 `json:"created" xorm:"created"`
-	Updated int64 `json:"updated" xorm:"updated"`
+	UserID  string `json:"-"       xorm:"UNIQUE(s) INDEX NOT NULL 'user_id'"`
+	RepoID  string `json:"-"       xorm:"UNIQUE(s) INDEX NOT NULL 'repo_id'"`
+	Repo    *Repo  `json:"-"       xorm:"-"`
+	Pull    bool   `json:"pull"    xorm:"pull"`
+	Push    bool   `json:"push"    xorm:"push"`
+	Admin   bool   `json:"admin"   xorm:"admin"`
+	Synced  int64  `json:"synced"  xorm:"synced"`
+	Created int64  `json:"created" xorm:"created"`
+	Updated int64  `json:"updated" xorm:"updated"`
 } //	@name	Perm
 
 // TableName return database table name for xorm.

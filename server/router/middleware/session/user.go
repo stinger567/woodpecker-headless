@@ -16,7 +16,6 @@ package session
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
@@ -27,12 +26,12 @@ import (
 	"go.woodpecker-ci.org/woodpecker/v3/shared/token"
 )
 
-func User(c *gin.Context) *model.User {
+func User(c *gin.Context) *model.Account {
 	v, ok := c.Get("user")
 	if !ok {
 		return nil
 	}
-	u, ok := v.(*model.User)
+	u, ok := v.(*model.Account)
 	if !ok {
 		return nil
 	}
@@ -41,15 +40,11 @@ func User(c *gin.Context) *model.User {
 
 func SetUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var user *model.User
+		var user *model.Account
 
 		t, err := token.ParseRequest([]token.Type{token.UserToken, token.SessToken}, c.Request, func(t *token.Token) (string, error) {
-			var err error
-			userID, err := strconv.ParseInt(t.Get("user-id"), 10, 64)
-			if err != nil {
-				return "", err
-			}
-			user, err = store.FromContext(c).GetUser(userID)
+			userID := t.Get("user-id")
+			user, err := store.FromContext(c).GetUser(userID, IsInternal(c))
 			return user.Hash, err
 		})
 		if err == nil {
@@ -137,7 +132,7 @@ func MustOrgMember(admin bool) gin.HandlerFunc {
 		}
 
 		// User can access his own, admin can access all
-		if (org.Name == user.Login) || user.Admin {
+		if (org.Name == user.AccountName) || user.Admin {
 			c.Next()
 			return
 		}
@@ -162,6 +157,34 @@ func MustOrgMember(admin bool) gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+
+		c.Next()
+	}
+}
+
+func IsInternal(c *gin.Context) bool {
+	v, ok := c.Get("internal")
+	if !ok {
+		return false
+	}
+	u, ok := v.(bool)
+	if !ok {
+		return false
+	}
+	return u
+}
+
+func SetInternal() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		isInternal := false
+
+		// however you determine internal:
+		if c.GetHeader("X-Internal") == "true" {
+			isInternal = true
+		}
+
+		// store in gin context
+		c.Set("internal", isInternal)
 
 		c.Next()
 	}

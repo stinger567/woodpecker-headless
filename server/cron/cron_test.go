@@ -34,9 +34,9 @@ func TestCreatePipeline(t *testing.T) {
 	store := store_mocks.NewMockStore(t)
 	ctx := t.Context()
 
-	creator := &model.User{
-		ID:    1,
-		Login: "user1",
+	creator := &model.Account{
+		ID:          1,
+		AccountName: "user1",
 	}
 	repo1 := &model.Repo{
 		ID:       1,

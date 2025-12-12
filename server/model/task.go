@@ -34,7 +34,7 @@ type Task struct {
 	DepStatus    map[string]StatusValue `json:"dep_status"   xorm:"json 'dependencies_status'"`
 	AgentID      int64                  `json:"agent_id"     xorm:"'agent_id'"`
 	PipelineID   int64                  `json:"pipeline_id"  xorm:"'pipeline_id'"`
-	RepoID       int64                  `json:"repo_id"      xorm:"'repo_id'"`
+	RepoID       string                 `json:"repo_id"      xorm:"'repo_id'"`
 } //	@name	Task
 
 // TableName return database table name for xorm.
@@ -56,7 +56,7 @@ func (t *Task) ApplyLabelsFromRepo(r *Repo) error {
 		t.Labels = make(map[string]string)
 	}
 	t.Labels[pipeline.LabelFilterRepo] = r.FullName
-	t.Labels[pipeline.LabelFilterOrg] = fmt.Sprintf("%d", r.OrgID)
+	t.Labels[pipeline.LabelFilterOrg] = r.OrgID
 	return nil
 }
 

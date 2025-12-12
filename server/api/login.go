@@ -20,7 +20,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -67,7 +66,7 @@ func HandleAuth(c *gin.Context) {
 	code := c.Request.FormValue("code")
 	state := c.Request.FormValue("state")
 	isCallback := code != "" && state != ""
-	var forgeID int64
+	var forgeID string
 
 	if isCallback { // validate the state token
 		stateToken, err := token.Parse([]token.Type{token.OAuthStateToken}, state, func(_ *token.Token) (string, error) {
@@ -80,7 +79,7 @@ func HandleAuth(c *gin.Context) {
 		}
 
 		_forgeID := stateToken.Get("forge-id")
-		forgeID, err = strconv.ParseInt(_forgeID, 10, 64)
+		forgeID = _forgeID
 		if err != nil {
 			log.Error().Err(err).Msg("forge-id of state token invalid")
 			c.Redirect(http.StatusSeeOther, server.Config.Server.RootPath+"/login?error=invalid_state")
@@ -91,9 +90,9 @@ func HandleAuth(c *gin.Context) {
 
 		_forgeID := c.Request.FormValue("forge_id")
 		if _forgeID == "" {
-			forgeID = 1 // fallback to main forge
+			forgeID = "1" // fallback to main forge
 		} else {
-			forgeID, err = strconv.ParseInt(_forgeID, 10, 64)
+			forgeID = _forgeID
 			if err != nil {
 				log.Error().Err(err).Msg("forge-id of state token invalid")
 				c.Redirect(http.StatusSeeOther, server.Config.Server.RootPath+"/login?error=invalid_state")
@@ -104,7 +103,7 @@ func HandleAuth(c *gin.Context) {
 		jwtSecret := server.Config.Server.JWTSecret
 		exp := time.Now().Add(stateTokenDuration).Unix()
 		stateToken := token.New(token.OAuthStateToken)
-		stateToken.Set("forge-id", strconv.FormatInt(forgeID, 10))
+		stateToken.Set("forge-id", forgeID)
 		state, err = stateToken.SignExpires(jwtSecret, exp)
 		if err != nil {
 			log.Error().Err(err).Msg("cannot create state token")
@@ -113,7 +112,7 @@ func HandleAuth(c *gin.Context) {
 		}
 	}
 
-	_forge, err := server.Config.Services.Manager.ForgeByID(forgeID)
+	_forge, err := server.Config.Services.Manager.ForgeByID(forgeID, false)
 	if err != nil {
 		log.Error().Err(err).Msgf("cannot get forge by id %d", forgeID)
 		c.Redirect(http.StatusSeeOther, server.Config.Server.RootPath+"/login?error=internal_error")
@@ -145,7 +144,7 @@ func HandleAuth(c *gin.Context) {
 				PerPage: perPage,
 			})
 			if terr != nil {
-				log.Error().Err(terr).Msgf("cannot verify team membership for %s", userFromForge.Login)
+				log.Error().Err(terr).Msgf("cannot verify team membership for %s", userFromForge.AccountName)
 				c.Redirect(http.StatusSeeOther, server.Config.Server.RootPath+"/login?error=internal_error")
 				return
 			}
@@ -160,25 +159,25 @@ func HandleAuth(c *gin.Context) {
 		}
 	}
 
-	var user *model.User
+	var user *model.Account
 
 	// get the user from the database
-	user, err = _store.GetUserByRemoteID(forgeID, userFromForge.ForgeRemoteID)
+	user, err = _store.GetUserByRemoteID(forgeID, userFromForge.ForgeRemoteID, userFromForge.Internal)
 	if err != nil && !errors.Is(err, types.RecordNotExist) {
-		log.Error().Err(err).Msgf("cannot get user %s", userFromForge.Login)
+		log.Error().Err(err).Msgf("cannot get user %s", userFromForge.AccountName)
 		c.Redirect(http.StatusSeeOther, server.Config.Server.RootPath+"/login?error=internal_error")
 		return
 	}
 	// update user login (in case forge supports renaming)
 	if user != nil {
-		user.Login = userFromForge.Login
+		user.AccountName = userFromForge.AccountName
 	}
 
 	// re-try with login name
 	if user == nil || errors.Is(err, types.RecordNotExist) {
-		user, err = _store.GetUserByLogin(forgeID, userFromForge.Login)
+		user, err = _store.GetUserByLogin(forgeID, userFromForge.AccountName, userFromForge.Internal)
 		if err != nil && !errors.Is(err, types.RecordNotExist) {
-			log.Error().Err(err).Msgf("cannot get user %s", userFromForge.Login)
+			log.Error().Err(err).Msgf("cannot get user %s", userFromForge.AccountName)
 			c.Redirect(http.StatusSeeOther, server.Config.Server.RootPath+"/login?error=internal_error")
 			return
 		}
@@ -187,41 +186,32 @@ func HandleAuth(c *gin.Context) {
 	if user == nil || errors.Is(err, types.RecordNotExist) {
 		// if self-registration is disabled we should return a not authorized error
 		if !server.Config.Permissions.Open && !server.Config.Permissions.Admins.IsAdmin(userFromForge) {
-			log.Error().Msgf("cannot register %s. registration closed", userFromForge.Login)
+			log.Error().Msgf("cannot register %s. registration closed", userFromForge.AccountName)
 			c.Redirect(http.StatusSeeOther, server.Config.Server.RootPath+"/login?error=registration_closed")
 			return
 		}
 
 		// create the user account
-		user = &model.User{
+		user = &model.Account{
 			ForgeID:       forgeID,
 			ForgeRemoteID: userFromForge.ForgeRemoteID,
-			Login:         userFromForge.Login,
+			AccountName:   userFromForge.AccountName,
 			AccessToken:   userFromForge.AccessToken,
 			RefreshToken:  userFromForge.RefreshToken,
 			Expiry:        userFromForge.Expiry,
-			Email:         userFromForge.Email,
-			Avatar:        userFromForge.Avatar,
 			Hash: base32.StdEncoding.EncodeToString(
 				random.GetRandomBytes(32),
 			),
 		}
 
-		// insert the user into the database
-		if err := _store.CreateUser(user); err != nil {
-			log.Error().Err(err).Msgf("cannot insert %s", user.Login)
-			log.Trace().Msgf("user was: %#v", user)
-			c.Redirect(http.StatusSeeOther, server.Config.Server.RootPath+"/login?error=internal_error")
-			return
-		}
 	}
 
 	// create or set the user's organization if it isn't linked yet
-	if user.OrgID == 0 {
+	if user.OrgID == "" {
 		// check if an org with the same name exists already and assign it to the user if it does
-		org, err := _store.OrgFindByName(user.Login, forgeID)
+		org, err := _store.OrgFindByName(user.AccountName, forgeID, user.Internal)
 		if err != nil && !errors.Is(err, types.RecordNotExist) {
-			log.Error().Err(err).Msgf("cannot get org for user %s", user.Login)
+			log.Error().Err(err).Msgf("cannot get org for user %s", user.AccountName)
 			c.Redirect(http.StatusSeeOther, server.Config.Server.RootPath+"/login?error=internal_error")
 			return
 		}
@@ -232,35 +222,35 @@ func HandleAuth(c *gin.Context) {
 			user.OrgID = org.ID
 
 			if err := _store.OrgUpdate(org); err != nil {
-				log.Error().Err(err).Msgf("cannot assign user %s to existing org %d", user.Login, org.ID)
+				log.Error().Err(err).Msgf("cannot assign user %s to existing org %d", user.AccountName, org.ID)
 			}
 		}
 
 		// if still no org with the same name exists => create a new org
-		if user.OrgID == 0 || errors.Is(err, types.RecordNotExist) {
+		if user.OrgID == "" || errors.Is(err, types.RecordNotExist) {
 			org := &model.Org{
-				Name:    user.Login,
+				Name:    user.AccountName,
 				IsUser:  true,
 				Private: false,
 				ForgeID: user.ForgeID,
 			}
 			if err := _store.OrgCreate(org); err != nil {
-				log.Error().Err(err).Msgf("cannot create org for user %s", user.Login)
+				log.Error().Err(err).Msgf("cannot create org for user %s", user.AccountName)
 			}
 			user.OrgID = org.ID
 		}
 	} else {
 		// update org name if necessary
-		org, err := _store.OrgGet(user.OrgID)
+		org, err := _store.OrgGet(user.OrgID, user.Internal)
 		if err != nil {
-			log.Error().Err(err).Msgf("cannot get org %d for user %s", user.OrgID, user.Login)
+			log.Error().Err(err).Msgf("cannot get org %d for user %s", user.OrgID, user.AccountName)
 			c.Redirect(http.StatusSeeOther, server.Config.Server.RootPath+"/login?error=internal_error")
 			return
 		}
-		if org != nil && org.Name != user.Login {
-			org.Name = user.Login
+		if org != nil && org.Name != user.AccountName {
+			org.Name = user.AccountName
 			if err := _store.OrgUpdate(org); err != nil {
-				log.Error().Err(err).Msgf("cannot update org %d name to user name %s", org.ID, user.Login)
+				log.Error().Err(err).Msgf("cannot update org %d name to user name %s", org.ID, user.AccountName)
 			}
 		}
 	}
@@ -268,32 +258,29 @@ func HandleAuth(c *gin.Context) {
 	// update the user meta data and authorization data.
 	user.AccessToken = userFromForge.AccessToken
 	user.RefreshToken = userFromForge.RefreshToken
-	user.Email = userFromForge.Email
-	user.Avatar = userFromForge.Avatar
 	user.ForgeID = forgeID
 	user.ForgeRemoteID = userFromForge.ForgeRemoteID
-	user.Login = userFromForge.Login
-	user.Admin = user.Admin || server.Config.Permissions.Admins.IsAdmin(userFromForge)
+	user.AccountName = userFromForge.AccountName
 
 	if err := _store.UpdateUser(user); err != nil {
-		log.Error().Err(err).Msgf("cannot update user %s", user.Login)
+		log.Error().Err(err).Msgf("cannot update user %s", user.AccountName)
 		c.Redirect(http.StatusSeeOther, server.Config.Server.RootPath+"/login?error=internal_error")
 		return
 	}
 
 	exp := time.Now().Add(server.Config.Server.SessionExpires).Unix()
 	_token := token.New(token.SessToken)
-	_token.Set("user-id", strconv.FormatInt(user.ID, 10))
+	_token.Set("user-id", user.ID)
 	tokenString, err := _token.SignExpires(user.Hash, exp)
 	if err != nil {
-		log.Error().Msgf("cannot create token for user %s", user.Login)
+		log.Error().Msgf("cannot create token for user %s", user.AccountName)
 		c.Redirect(http.StatusSeeOther, server.Config.Server.RootPath+"/login?error=internal_error")
 		return
 	}
 
 	err = updateRepoPermissions(c, user, _store, _forge)
 	if err != nil {
-		log.Error().Err(err).Msgf("cannot update repo permissions for user %s", user.Login)
+		log.Error().Err(err).Msgf("cannot update repo permissions for user %s", user.AccountName)
 		c.Redirect(http.StatusSeeOther, server.Config.Server.RootPath+"/login?error=internal_error")
 		return
 	}
@@ -303,7 +290,7 @@ func HandleAuth(c *gin.Context) {
 	c.Redirect(http.StatusSeeOther, server.Config.Server.RootPath+"/")
 }
 
-func updateRepoPermissions(c *gin.Context, user *model.User, _store store.Store, _forge forge.Forge) error {
+func updateRepoPermissions(c *gin.Context, user *model.Account, _store store.Store, _forge forge.Forge) error {
 	repos, err := utils.Paginate(func(page int) ([]*model.Repo, error) {
 		return _forge.Repos(c, user, &model.ListOptions{
 			Page:    page,
@@ -315,7 +302,7 @@ func updateRepoPermissions(c *gin.Context, user *model.User, _store store.Store,
 	}
 
 	for _, forgeRepo := range repos {
-		dbRepo, err := _store.GetRepoForgeID(forgeRepo.ForgeRemoteID)
+		dbRepo, err := _store.GetRepoForgeID(forgeRepo.ForgeRemoteID, forgeRepo.Internal)
 		if err != nil && errors.Is(err, types.RecordNotExist) {
 			continue
 		}
@@ -327,7 +314,7 @@ func updateRepoPermissions(c *gin.Context, user *model.User, _store store.Store,
 			continue
 		}
 
-		log.Debug().Msgf("synced user permission for user %s and repo %s", user.Login, dbRepo.FullName)
+		log.Debug().Msgf("synced user permission for user %s and repo %s", user.AccountName, dbRepo.FullName)
 		perm := forgeRepo.Perm
 		perm.Repo = dbRepo
 		perm.RepoID = dbRepo.ID
@@ -339,10 +326,4 @@ func updateRepoPermissions(c *gin.Context, user *model.User, _store store.Store,
 	}
 
 	return nil
-}
-
-func GetLogout(c *gin.Context) {
-	httputil.DelCookie(c.Writer, c.Request, "user_sess")
-	httputil.DelCookie(c.Writer, c.Request, "user_last")
-	c.Redirect(http.StatusSeeOther, server.Config.Server.RootPath+"/")
 }

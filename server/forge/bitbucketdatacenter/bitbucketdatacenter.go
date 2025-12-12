@@ -102,7 +102,7 @@ func (c *client) URL() string {
 	return c.url
 }
 
-func (c *client) Login(ctx context.Context, req *forge_types.OAuthRequest) (*model.User, string, error) {
+func (c *client) Login(ctx context.Context, req *forge_types.OAuthRequest) (*model.Account, string, error) {
 	config := c.newOAuth2Config()
 
 	// TODO: Use pkce flow (https://oauth.net/2/pkce/) ...
@@ -125,7 +125,7 @@ func (c *client) Login(ctx context.Context, req *forge_types.OAuthRequest) (*mod
 		return nil, "", err
 	}
 
-	bc, err := c.newClient(ctx, &model.User{AccessToken: token.AccessToken})
+	bc, err := c.newClient(ctx, &model.Account{AccessToken: token.AccessToken})
 	if err != nil {
 		return nil, "", fmt.Errorf("unable to create bitbucket client: %w", err)
 	}
@@ -149,7 +149,7 @@ func (c *client) Auth(ctx context.Context, accessToken, _ string) (string, error
 	return client.FindCurrentUser(ctx)
 }
 
-func (c *client) Refresh(ctx context.Context, u *model.User) (bool, error) {
+func (c *client) Refresh(ctx context.Context, u *model.Account) (bool, error) {
 	config := c.newOAuth2Config()
 	t := &oauth2.Token{
 		RefreshToken: u.RefreshToken,
@@ -164,7 +164,7 @@ func (c *client) Refresh(ctx context.Context, u *model.User) (bool, error) {
 	return true, nil
 }
 
-func (c *client) Repo(ctx context.Context, u *model.User, rID model.ForgeRemoteID, owner, name string) (*model.Repo, error) {
+func (c *client) Repo(ctx context.Context, u *model.Account, rID model.ForgeRemoteID, owner, name string) (*model.Repo, error) {
 	bc, err := c.newClient(ctx, u)
 	if err != nil {
 		return nil, fmt.Errorf("unable to create bitbucket client: %w", err)
@@ -217,7 +217,7 @@ func (c *client) Repo(ctx context.Context, u *model.User, rID model.ForgeRemoteI
 	return convertRepo(repo, perms, b.DisplayID), nil
 }
 
-func (c *client) Repos(ctx context.Context, u *model.User, p *model.ListOptions) ([]*model.Repo, error) {
+func (c *client) Repos(ctx context.Context, u *model.Account, p *model.ListOptions) ([]*model.Repo, error) {
 	// we do not support pagination as we merge different responses together
 	// so first page returns all and we paginate here
 	if p.Page != 1 {
@@ -273,7 +273,7 @@ func (c *client) Repos(ctx context.Context, u *model.User, p *model.ListOptions)
 	return all, nil
 }
 
-func (c *client) File(ctx context.Context, u *model.User, r *model.Repo, p *model.Pipeline, f string) ([]byte, error) {
+func (c *client) File(ctx context.Context, u *model.Account, r *model.Repo, p *model.Pipeline, f string) ([]byte, error) {
 	bc, err := c.newClient(ctx, u)
 	if err != nil {
 		return nil, fmt.Errorf("unable to create bitbucket client: %w", err)
@@ -292,7 +292,7 @@ func (c *client) File(ctx context.Context, u *model.User, r *model.Repo, p *mode
 	return b, nil
 }
 
-func (c *client) Dir(ctx context.Context, u *model.User, r *model.Repo, p *model.Pipeline, path string) ([]*forge_types.FileMeta, error) {
+func (c *client) Dir(ctx context.Context, u *model.Account, r *model.Repo, p *model.Pipeline, path string) ([]*forge_types.FileMeta, error) {
 	bc, err := c.newClient(ctx, u)
 	if err != nil {
 		return nil, fmt.Errorf("unable to create bitbucket client: %w", err)
@@ -327,7 +327,7 @@ func (c *client) Dir(ctx context.Context, u *model.User, r *model.Repo, p *model
 	return all, nil
 }
 
-func (c *client) Status(ctx context.Context, u *model.User, repo *model.Repo, pipeline *model.Pipeline, workflow *model.Workflow) error {
+func (c *client) Status(ctx context.Context, u *model.Account, repo *model.Repo, pipeline *model.Pipeline, workflow *model.Workflow) error {
 	bc, err := c.newClient(ctx, u)
 	if err != nil {
 		return fmt.Errorf("unable to create bitbucket client: %w", err)
@@ -346,7 +346,7 @@ func (c *client) Status(ctx context.Context, u *model.User, repo *model.Repo, pi
 	return err
 }
 
-func (c *client) Netrc(_ *model.User, r *model.Repo) (*model.Netrc, error) {
+func (c *client) Netrc(_ *model.Account, r *model.Repo) (*model.Netrc, error) {
 	host, err := common.ExtractHostFromCloneURL(r.Clone)
 	if err != nil {
 		return nil, fmt.Errorf("unable to create bitbucket client: %w", err)
@@ -361,7 +361,7 @@ func (c *client) Netrc(_ *model.User, r *model.Repo) (*model.Netrc, error) {
 }
 
 // Branches returns the names of all branches for the named repository.
-func (c *client) Branches(ctx context.Context, u *model.User, r *model.Repo, p *model.ListOptions) ([]string, error) {
+func (c *client) Branches(ctx context.Context, u *model.Account, r *model.Repo, p *model.ListOptions) ([]string, error) {
 	bc, err := c.newClient(ctx, u)
 	if err != nil {
 		return nil, fmt.Errorf("unable to create bitbucket client: %w", err)
@@ -386,7 +386,7 @@ func (c *client) Branches(ctx context.Context, u *model.User, r *model.Repo, p *
 	return all, nil
 }
 
-func (c *client) BranchHead(ctx context.Context, u *model.User, r *model.Repo, b string) (*model.Commit, error) {
+func (c *client) BranchHead(ctx context.Context, u *model.Account, r *model.Repo, b string) (*model.Commit, error) {
 	bc, err := c.newClient(ctx, u)
 	if err != nil {
 		return nil, fmt.Errorf("unable to create bitbucket client: %w", err)
@@ -409,7 +409,7 @@ func (c *client) BranchHead(ctx context.Context, u *model.User, r *model.Repo, b
 	return nil, fmt.Errorf("no matching branches found")
 }
 
-func (c *client) PullRequests(ctx context.Context, u *model.User, r *model.Repo, p *model.ListOptions) ([]*model.PullRequest, error) {
+func (c *client) PullRequests(ctx context.Context, u *model.Account, r *model.Repo, p *model.ListOptions) ([]*model.PullRequest, error) {
 	bc, err := c.newClient(ctx, u)
 	if err != nil {
 		return nil, fmt.Errorf("unable to create bitbucket client: %w", err)
@@ -434,7 +434,7 @@ func (c *client) PullRequests(ctx context.Context, u *model.User, r *model.Repo,
 	return all, nil
 }
 
-func (c *client) Activate(ctx context.Context, u *model.User, r *model.Repo, link string) error {
+func (c *client) Activate(ctx context.Context, u *model.Account, r *model.Repo, link string) error {
 	bc, err := c.newClient(ctx, u)
 	if err != nil {
 		return fmt.Errorf("unable to create bitbucket client: %w", err)
@@ -458,7 +458,7 @@ func (c *client) Activate(ctx context.Context, u *model.User, r *model.Repo, lin
 	return err
 }
 
-func (c *client) Deactivate(ctx context.Context, u *model.User, r *model.Repo, link string) error {
+func (c *client) Deactivate(ctx context.Context, u *model.Account, r *model.Repo, link string) error {
 	bc, err := c.newClient(ctx, u)
 	if err != nil {
 		return fmt.Errorf("unable to create bitbucket client: %w", err)
@@ -534,20 +534,20 @@ func (c *client) Hook(ctx context.Context, r *http.Request) (*model.Repo, *model
 	return repo, pipe, nil
 }
 
-func (c *client) getUserAndRepo(ctx context.Context, r *model.Repo) (*model.User, *model.Repo, error) {
+func (c *client) getUserAndRepo(ctx context.Context, r *model.Repo) (*model.Account, *model.Repo, error) {
 	_store, ok := store.TryFromContext(ctx)
 	if !ok {
 		log.Error().Msg("could not get store from context")
 		return nil, nil, fmt.Errorf("unable to get store from context")
 	}
 
-	repo, err := _store.GetRepoForgeID(r.ForgeRemoteID)
+	repo, err := _store.GetRepoForgeID(r.ForgeRemoteID, false)
 	if err != nil {
 		return nil, nil, fmt.Errorf("unable to get repo: %w", err)
 	}
 	log.Trace().Any("repo", repo).Msg("got repo")
 
-	user, err := _store.GetUser(repo.UserID)
+	user, err := _store.GetUser(repo.ForgeAccountID, false)
 	if err != nil {
 		return nil, nil, fmt.Errorf("unable to get user: %w", err)
 	}
@@ -558,7 +558,7 @@ func (c *client) getUserAndRepo(ctx context.Context, r *model.Repo) (*model.User
 	return user, repo, nil
 }
 
-func (c *client) updatePipelineFromCommit(ctx context.Context, u *model.User, r *model.Repo, p *model.Pipeline) (*model.Pipeline, error) {
+func (c *client) updatePipelineFromCommit(ctx context.Context, u *model.Account, r *model.Repo, p *model.Pipeline) (*model.Pipeline, error) {
 	if p == nil {
 		return nil, nil
 	}
@@ -592,7 +592,7 @@ func (c *client) updatePipelineFromCommit(ctx context.Context, u *model.User, r 
 	return p, nil
 }
 
-func (c *client) updatePipelineFromPullRequest(ctx context.Context, u *model.User, r *model.Repo, p *model.Pipeline, pullRequestID uint64) (*model.Pipeline, error) {
+func (c *client) updatePipelineFromPullRequest(ctx context.Context, u *model.Account, r *model.Repo, p *model.Pipeline, pullRequestID uint64) (*model.Pipeline, error) {
 	bc, err := c.newClient(ctx, u)
 	if err != nil {
 		return nil, fmt.Errorf("unable to create bitbucket client: %w", err)
@@ -617,7 +617,7 @@ func (c *client) updatePipelineFromPullRequest(ctx context.Context, u *model.Use
 }
 
 // Teams fetches all the projects for a given user and converts them into teams.
-func (c *client) Teams(ctx context.Context, u *model.User, p *model.ListOptions) ([]*model.Team, error) {
+func (c *client) Teams(ctx context.Context, u *model.Account, p *model.ListOptions) ([]*model.Team, error) {
 	if p.Page != 1 {
 		return make([]*model.Team, 0), nil
 	}
@@ -649,13 +649,13 @@ func (c *client) Teams(ctx context.Context, u *model.User, p *model.ListOptions)
 }
 
 // TeamPerm is not supported.
-func (*client) TeamPerm(_ *model.User, _ string) (*model.Perm, error) {
+func (*client) TeamPerm(_ *model.Account, _ string) (*model.Perm, error) {
 	return nil, nil
 }
 
 // OrgMembership returns if user is member of organization and if user
 // is admin/owner in this organization.
-func (c *client) OrgMembership(ctx context.Context, u *model.User, org string) (*model.OrgPerm, error) {
+func (c *client) OrgMembership(ctx context.Context, u *model.Account, org string) (*model.OrgPerm, error) {
 	if !c.oauthEnableProjectAdminScope {
 		// This method cannot be implemented without the PROJECT_ADMIN scope included in the OAuth2 configuration
 		return nil, nil
@@ -721,7 +721,7 @@ func (c *client) hasRepositoryWriteAccess(ctx context.Context, org string, clien
 }
 
 // Org fetches the organization from the forge by name. If the name is a user an org with type user is returned.
-func (c *client) Org(_ context.Context, _ *model.User, owner string) (*model.Org, error) {
+func (c *client) Org(_ context.Context, _ *model.Account, owner string) (*model.Org, error) {
 	if strings.HasPrefix(owner, "~") {
 		return &model.Org{
 			Name:   owner,
@@ -763,7 +763,7 @@ func (c *client) newOAuth2Config() *oauth2.Config {
 	}
 }
 
-func (c *client) newClient(ctx context.Context, u *model.User) (*bb.Client, error) {
+func (c *client) newClient(ctx context.Context, u *model.Account) (*bb.Client, error) {
 	config := c.newOAuth2Config()
 	t := &oauth2.Token{
 		AccessToken: u.AccessToken,

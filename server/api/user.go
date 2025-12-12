@@ -15,19 +15,16 @@
 package api
 
 import (
-	"encoding/base32"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/tink/go/subtle/random"
 	"github.com/rs/zerolog/log"
 
 	"go.woodpecker-ci.org/woodpecker/v3/server"
 	"go.woodpecker-ci.org/woodpecker/v3/server/model"
 	"go.woodpecker-ci.org/woodpecker/v3/server/router/middleware/session"
 	"go.woodpecker-ci.org/woodpecker/v3/server/store"
-	"go.woodpecker-ci.org/woodpecker/v3/shared/token"
 	"go.woodpecker-ci.org/woodpecker/v3/shared/utils"
 )
 
@@ -150,7 +147,7 @@ func GetRepos(c *gin.Context) {
 		return
 	}
 
-	repoIDs := make([]int64, len(activeRepos))
+	repoIDs := make([]string, len(activeRepos))
 	for i, repo := range activeRepos {
 		repoIDs[i] = repo.ID
 	}
@@ -161,7 +158,7 @@ func GetRepos(c *gin.Context) {
 		return
 	}
 
-	latestPipelines := make(map[int64]*model.Pipeline, len(activeRepos))
+	latestPipelines := make(map[string]*model.Pipeline, len(activeRepos))
 	for _, pipeline := range pipelines {
 		latestPipelines[pipeline.RepoID] = pipeline
 	}
@@ -175,55 +172,4 @@ func GetRepos(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, repos)
-}
-
-// PostToken
-//
-//	@Summary	Return the token of the current user as string
-//	@Router		/user/token [post]
-//	@Produce	plain
-//	@Success	200
-//	@Tags		User
-//	@Param		Authorization	header	string	true	"Insert your personal access token"	default(Bearer <personal access token>)
-func PostToken(c *gin.Context) {
-	user := session.User(c)
-	t := token.New(token.UserToken)
-	t.Set("user-id", strconv.FormatInt(user.ID, 10))
-	tokenString, err := t.Sign(user.Hash)
-	if err != nil {
-		_ = c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	c.String(http.StatusOK, tokenString)
-}
-
-// DeleteToken
-//
-//	@Summary		Reset a token
-//	@Description	Reset's the current personal access token of the user and returns a new one.
-//	@Router			/user/token [delete]
-//	@Produce		plain
-//	@Success		200
-//	@Tags			User
-//	@Param			Authorization	header	string	true	"Insert your personal access token"	default(Bearer <personal access token>)
-func DeleteToken(c *gin.Context) {
-	_store := store.FromContext(c)
-
-	user := session.User(c)
-	user.Hash = base32.StdEncoding.EncodeToString(
-		random.GetRandomBytes(32),
-	)
-	if err := _store.UpdateUser(user); err != nil {
-		c.String(http.StatusInternalServerError, "Error revoking tokens. %s", err)
-		return
-	}
-
-	t := token.New(token.UserToken)
-	t.Set("user-id", strconv.FormatInt(user.ID, 10))
-	tokenString, err := t.Sign(user.Hash)
-	if err != nil {
-		_ = c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	c.String(http.StatusOK, tokenString)
 }

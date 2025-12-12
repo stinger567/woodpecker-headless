@@ -31,7 +31,7 @@ import (
 	"go.woodpecker-ci.org/woodpecker/v3/server/store"
 )
 
-func parsePipeline(forge forge.Forge, store store.Store, currentPipeline *model.Pipeline, user *model.User, repo *model.Repo, yamls []*forge_types.FileMeta, envs map[string]string) ([]*stepbuilder.Item, error) {
+func parsePipeline(forge forge.Forge, store store.Store, currentPipeline *model.Pipeline, user *model.Account, repo *model.Repo, yamls []*forge_types.FileMeta, envs map[string]string) ([]*stepbuilder.Item, error) {
 	netrc, err := forge.Netrc(user, repo)
 	if err != nil {
 		log.Error().Err(err).Msg("failed to generate netrc file")
@@ -93,7 +93,7 @@ func parsePipeline(forge forge.Forge, store store.Store, currentPipeline *model.
 }
 
 func createPipelineItems(c context.Context, forge forge.Forge, store store.Store,
-	currentPipeline *model.Pipeline, user *model.User, repo *model.Repo,
+	currentPipeline *model.Pipeline, user *model.Account, repo *model.Repo,
 	yamls []*forge_types.FileMeta, envs map[string]string,
 ) (*model.Pipeline, []*stepbuilder.Item, error) {
 	pipelineItems, err := parsePipeline(forge, store, currentPipeline, user, repo, yamls, envs)

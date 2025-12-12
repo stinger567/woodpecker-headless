@@ -23,7 +23,6 @@ import (
 	"os"
 	"runtime"
 	"slices"
-	"strconv"
 	"strings"
 	"time"
 
@@ -78,9 +77,9 @@ type config struct {
 	PriorityClassName           string
 }
 
-func (c *config) GetNamespace(orgID int64) string {
+func (c *config) GetNamespace(orgID string) string {
 	if c.EnableNamespacePerOrg {
-		return strings.ToLower(fmt.Sprintf("%s-%s", c.Namespace, strconv.FormatInt(orgID, 10)))
+		return strings.ToLower(fmt.Sprintf("%s-%s", c.Namespace, orgID))
 	}
 	return c.Namespace
 }

@@ -782,7 +782,7 @@ func (_c *MockStore_CreateRepo_Call) RunAndReturn(run func(repo *model.Repo) err
 }
 
 // CreateUser provides a mock function for the type MockStore
-func (_mock *MockStore) CreateUser(user *model.User) error {
+func (_mock *MockStore) CreateUser(user *model.Account) error {
 	ret := _mock.Called(user)
 
 	if len(ret) == 0 {
@@ -790,7 +790,7 @@ func (_mock *MockStore) CreateUser(user *model.User) error {
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(*model.User) error); ok {
+	if returnFunc, ok := ret.Get(0).(func(*model.Account) error); ok {
 		r0 = returnFunc(user)
 	} else {
 		r0 = ret.Error(0)
@@ -809,11 +809,11 @@ func (_e *MockStore_Expecter) CreateUser(user interface{}) *MockStore_CreateUser
 	return &MockStore_CreateUser_Call{Call: _e.mock.On("CreateUser", user)}
 }
 
-func (_c *MockStore_CreateUser_Call) Run(run func(user *model.User)) *MockStore_CreateUser_Call {
+func (_c *MockStore_CreateUser_Call) Run(run func(user *model.Account)) *MockStore_CreateUser_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 *model.User
+		var arg0 *model.Account
 		if args[0] != nil {
-			arg0 = args[0].(*model.User)
+			arg0 = args[0].(*model.Account)
 		}
 		run(
 			arg0,
@@ -827,7 +827,7 @@ func (_c *MockStore_CreateUser_Call) Return(err error) *MockStore_CreateUser_Cal
 	return _c
 }
 
-func (_c *MockStore_CreateUser_Call) RunAndReturn(run func(user *model.User) error) *MockStore_CreateUser_Call {
+func (_c *MockStore_CreateUser_Call) RunAndReturn(run func(user *model.Account) error) *MockStore_CreateUser_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -1370,7 +1370,7 @@ func (_c *MockStore_DeleteRepo_Call) RunAndReturn(run func(repo *model.Repo) err
 }
 
 // DeleteUser provides a mock function for the type MockStore
-func (_mock *MockStore) DeleteUser(user *model.User) error {
+func (_mock *MockStore) DeleteUser(user *model.Account) error {
 	ret := _mock.Called(user)
 
 	if len(ret) == 0 {
@@ -1378,7 +1378,7 @@ func (_mock *MockStore) DeleteUser(user *model.User) error {
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(*model.User) error); ok {
+	if returnFunc, ok := ret.Get(0).(func(*model.Account) error); ok {
 		r0 = returnFunc(user)
 	} else {
 		r0 = ret.Error(0)
@@ -1397,11 +1397,11 @@ func (_e *MockStore_Expecter) DeleteUser(user interface{}) *MockStore_DeleteUser
 	return &MockStore_DeleteUser_Call{Call: _e.mock.On("DeleteUser", user)}
 }
 
-func (_c *MockStore_DeleteUser_Call) Run(run func(user *model.User)) *MockStore_DeleteUser_Call {
+func (_c *MockStore_DeleteUser_Call) Run(run func(user *model.Account)) *MockStore_DeleteUser_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 *model.User
+		var arg0 *model.Account
 		if args[0] != nil {
-			arg0 = args[0].(*model.User)
+			arg0 = args[0].(*model.Account)
 		}
 		run(
 			arg0,
@@ -1415,7 +1415,7 @@ func (_c *MockStore_DeleteUser_Call) Return(err error) *MockStore_DeleteUser_Cal
 	return _c
 }
 
-func (_c *MockStore_DeleteUser_Call) RunAndReturn(run func(user *model.User) error) *MockStore_DeleteUser_Call {
+func (_c *MockStore_DeleteUser_Call) RunAndReturn(run func(user *model.Account) error) *MockStore_DeleteUser_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -2282,7 +2282,7 @@ func (_c *MockStore_GetPipelineQueue_Call) RunAndReturn(run func() ([]*model.Fee
 }
 
 // GetRepo provides a mock function for the type MockStore
-func (_mock *MockStore) GetRepo(n int64) (*model.Repo, error) {
+func (_mock *MockStore) GetRepo(n string, internal bool) (*model.Repo, error) {
 	ret := _mock.Called(n)
 
 	if len(ret) == 0 {
@@ -2291,17 +2291,17 @@ func (_mock *MockStore) GetRepo(n int64) (*model.Repo, error) {
 
 	var r0 *model.Repo
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(int64) (*model.Repo, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(string) (*model.Repo, error)); ok {
 		return returnFunc(n)
 	}
-	if returnFunc, ok := ret.Get(0).(func(int64) *model.Repo); ok {
+	if returnFunc, ok := ret.Get(0).(func(string) *model.Repo); ok {
 		r0 = returnFunc(n)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*model.Repo)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(int64) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
 		r1 = returnFunc(n)
 	} else {
 		r1 = ret.Error(1)
@@ -2459,7 +2459,7 @@ func (_c *MockStore_GetRepoForgeID_Call) RunAndReturn(run func(forgeRemoteID mod
 }
 
 // GetRepoLatestPipelines provides a mock function for the type MockStore
-func (_mock *MockStore) GetRepoLatestPipelines(int64s []int64) ([]*model.Pipeline, error) {
+func (_mock *MockStore) GetRepoLatestPipelines(int64s []string) ([]*model.Pipeline, error) {
 	ret := _mock.Called(int64s)
 
 	if len(ret) == 0 {
@@ -2468,17 +2468,17 @@ func (_mock *MockStore) GetRepoLatestPipelines(int64s []int64) ([]*model.Pipelin
 
 	var r0 []*model.Pipeline
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func([]int64) ([]*model.Pipeline, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func([]string) ([]*model.Pipeline, error)); ok {
 		return returnFunc(int64s)
 	}
-	if returnFunc, ok := ret.Get(0).(func([]int64) []*model.Pipeline); ok {
+	if returnFunc, ok := ret.Get(0).(func([]string) []*model.Pipeline); ok {
 		r0 = returnFunc(int64s)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*model.Pipeline)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func([]int64) error); ok {
+	if returnFunc, ok := ret.Get(1).(func([]string) error); ok {
 		r1 = returnFunc(int64s)
 	} else {
 		r1 = ret.Error(1)
@@ -2497,11 +2497,11 @@ func (_e *MockStore_Expecter) GetRepoLatestPipelines(int64s interface{}) *MockSt
 	return &MockStore_GetRepoLatestPipelines_Call{Call: _e.mock.On("GetRepoLatestPipelines", int64s)}
 }
 
-func (_c *MockStore_GetRepoLatestPipelines_Call) Run(run func(int64s []int64)) *MockStore_GetRepoLatestPipelines_Call {
+func (_c *MockStore_GetRepoLatestPipelines_Call) Run(run func(int64s []string)) *MockStore_GetRepoLatestPipelines_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 []int64
+		var arg0 []string
 		if args[0] != nil {
-			arg0 = args[0].([]int64)
+			arg0 = args[0].([]string)
 		}
 		run(
 			arg0,
@@ -2515,7 +2515,7 @@ func (_c *MockStore_GetRepoLatestPipelines_Call) Return(pipelines []*model.Pipel
 	return _c
 }
 
-func (_c *MockStore_GetRepoLatestPipelines_Call) RunAndReturn(run func(int64s []int64) ([]*model.Pipeline, error)) *MockStore_GetRepoLatestPipelines_Call {
+func (_c *MockStore_GetRepoLatestPipelines_Call) RunAndReturn(run func(int64s []string) ([]*model.Pipeline, error)) *MockStore_GetRepoLatestPipelines_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -2651,26 +2651,26 @@ func (_c *MockStore_GetRepoNameFallback_Call) RunAndReturn(run func(remoteID mod
 }
 
 // GetUser provides a mock function for the type MockStore
-func (_mock *MockStore) GetUser(n int64) (*model.User, error) {
+func (_mock *MockStore) GetUser(n string, internal bool) (*model.Account, error) {
 	ret := _mock.Called(n)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetUser")
 	}
 
-	var r0 *model.User
+	var r0 *model.Account
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(int64) (*model.User, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(string) (*model.Account, error)); ok {
 		return returnFunc(n)
 	}
-	if returnFunc, ok := ret.Get(0).(func(int64) *model.User); ok {
+	if returnFunc, ok := ret.Get(0).(func(string) *model.Account); ok {
 		r0 = returnFunc(n)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*model.User)
+			r0 = ret.Get(0).(*model.Account)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(int64) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
 		r1 = returnFunc(n)
 	} else {
 		r1 = ret.Error(1)
@@ -2702,34 +2702,34 @@ func (_c *MockStore_GetUser_Call) Run(run func(n int64)) *MockStore_GetUser_Call
 	return _c
 }
 
-func (_c *MockStore_GetUser_Call) Return(user *model.User, err error) *MockStore_GetUser_Call {
+func (_c *MockStore_GetUser_Call) Return(user *model.Account, err error) *MockStore_GetUser_Call {
 	_c.Call.Return(user, err)
 	return _c
 }
 
-func (_c *MockStore_GetUser_Call) RunAndReturn(run func(n int64) (*model.User, error)) *MockStore_GetUser_Call {
+func (_c *MockStore_GetUser_Call) RunAndReturn(run func(n int64) (*model.Account, error)) *MockStore_GetUser_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetUserByLogin provides a mock function for the type MockStore
-func (_mock *MockStore) GetUserByLogin(n int64, s string) (*model.User, error) {
+func (_mock *MockStore) GetUserByLogin(n int64, s string, internal bool) (*model.Account, error) {
 	ret := _mock.Called(n, s)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetUserByLogin")
 	}
 
-	var r0 *model.User
+	var r0 *model.Account
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(int64, string) (*model.User, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(int64, string) (*model.Account, error)); ok {
 		return returnFunc(n, s)
 	}
-	if returnFunc, ok := ret.Get(0).(func(int64, string) *model.User); ok {
+	if returnFunc, ok := ret.Get(0).(func(int64, string) *model.Account); ok {
 		r0 = returnFunc(n, s)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*model.User)
+			r0 = ret.Get(0).(*model.Account)
 		}
 	}
 	if returnFunc, ok := ret.Get(1).(func(int64, string) error); ok {
@@ -2770,34 +2770,34 @@ func (_c *MockStore_GetUserByLogin_Call) Run(run func(n int64, s string)) *MockS
 	return _c
 }
 
-func (_c *MockStore_GetUserByLogin_Call) Return(user *model.User, err error) *MockStore_GetUserByLogin_Call {
+func (_c *MockStore_GetUserByLogin_Call) Return(user *model.Account, err error) *MockStore_GetUserByLogin_Call {
 	_c.Call.Return(user, err)
 	return _c
 }
 
-func (_c *MockStore_GetUserByLogin_Call) RunAndReturn(run func(n int64, s string) (*model.User, error)) *MockStore_GetUserByLogin_Call {
+func (_c *MockStore_GetUserByLogin_Call) RunAndReturn(run func(n int64, s string) (*model.Account, error)) *MockStore_GetUserByLogin_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetUserByRemoteID provides a mock function for the type MockStore
-func (_mock *MockStore) GetUserByRemoteID(n int64, forgeRemoteID model.ForgeRemoteID) (*model.User, error) {
+func (_mock *MockStore) GetUserByRemoteID(n int64, forgeRemoteID model.ForgeRemoteID) (*model.Account, error) {
 	ret := _mock.Called(n, forgeRemoteID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetUserByRemoteID")
 	}
 
-	var r0 *model.User
+	var r0 *model.Account
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(int64, model.ForgeRemoteID) (*model.User, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(int64, model.ForgeRemoteID) (*model.Account, error)); ok {
 		return returnFunc(n, forgeRemoteID)
 	}
-	if returnFunc, ok := ret.Get(0).(func(int64, model.ForgeRemoteID) *model.User); ok {
+	if returnFunc, ok := ret.Get(0).(func(int64, model.ForgeRemoteID) *model.Account); ok {
 		r0 = returnFunc(n, forgeRemoteID)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*model.User)
+			r0 = ret.Get(0).(*model.Account)
 		}
 	}
 	if returnFunc, ok := ret.Get(1).(func(int64, model.ForgeRemoteID) error); ok {
@@ -2838,12 +2838,12 @@ func (_c *MockStore_GetUserByRemoteID_Call) Run(run func(n int64, forgeRemoteID 
 	return _c
 }
 
-func (_c *MockStore_GetUserByRemoteID_Call) Return(user *model.User, err error) *MockStore_GetUserByRemoteID_Call {
+func (_c *MockStore_GetUserByRemoteID_Call) Return(user *model.Account, err error) *MockStore_GetUserByRemoteID_Call {
 	_c.Call.Return(user, err)
 	return _c
 }
 
-func (_c *MockStore_GetUserByRemoteID_Call) RunAndReturn(run func(n int64, forgeRemoteID model.ForgeRemoteID) (*model.User, error)) *MockStore_GetUserByRemoteID_Call {
+func (_c *MockStore_GetUserByRemoteID_Call) RunAndReturn(run func(n int64, forgeRemoteID model.ForgeRemoteID) (*model.Account, error)) *MockStore_GetUserByRemoteID_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -2902,23 +2902,23 @@ func (_c *MockStore_GetUserCount_Call) RunAndReturn(run func() (int64, error)) *
 }
 
 // GetUserList provides a mock function for the type MockStore
-func (_mock *MockStore) GetUserList(p *model.ListOptions) ([]*model.User, error) {
+func (_mock *MockStore) GetUserList(p *model.ListOptions) ([]*model.Account, error) {
 	ret := _mock.Called(p)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetUserList")
 	}
 
-	var r0 []*model.User
+	var r0 []*model.Account
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(*model.ListOptions) ([]*model.User, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(*model.ListOptions) ([]*model.Account, error)); ok {
 		return returnFunc(p)
 	}
-	if returnFunc, ok := ret.Get(0).(func(*model.ListOptions) []*model.User); ok {
+	if returnFunc, ok := ret.Get(0).(func(*model.ListOptions) []*model.Account); ok {
 		r0 = returnFunc(p)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*model.User)
+			r0 = ret.Get(0).([]*model.Account)
 		}
 	}
 	if returnFunc, ok := ret.Get(1).(func(*model.ListOptions) error); ok {
@@ -2953,12 +2953,12 @@ func (_c *MockStore_GetUserList_Call) Run(run func(p *model.ListOptions)) *MockS
 	return _c
 }
 
-func (_c *MockStore_GetUserList_Call) Return(users []*model.User, err error) *MockStore_GetUserList_Call {
+func (_c *MockStore_GetUserList_Call) Return(users []*model.Account, err error) *MockStore_GetUserList_Call {
 	_c.Call.Return(users, err)
 	return _c
 }
 
-func (_c *MockStore_GetUserList_Call) RunAndReturn(run func(p *model.ListOptions) ([]*model.User, error)) *MockStore_GetUserList_Call {
+func (_c *MockStore_GetUserList_Call) RunAndReturn(run func(p *model.ListOptions) ([]*model.Account, error)) *MockStore_GetUserList_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -3799,7 +3799,7 @@ func (_c *MockStore_OrgList_Call) RunAndReturn(run func(listOptions *model.ListO
 }
 
 // OrgRegistryFind provides a mock function for the type MockStore
-func (_mock *MockStore) OrgRegistryFind(n int64, s string) (*model.Registry, error) {
+func (_mock *MockStore) OrgRegistryFind(n string, s string) (*model.Registry, error) {
 	ret := _mock.Called(n, s)
 
 	if len(ret) == 0 {
@@ -3808,17 +3808,17 @@ func (_mock *MockStore) OrgRegistryFind(n int64, s string) (*model.Registry, err
 
 	var r0 *model.Registry
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(int64, string) (*model.Registry, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(string, string) (*model.Registry, error)); ok {
 		return returnFunc(n, s)
 	}
-	if returnFunc, ok := ret.Get(0).(func(int64, string) *model.Registry); ok {
+	if returnFunc, ok := ret.Get(0).(func(string, string) *model.Registry); ok {
 		r0 = returnFunc(n, s)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*model.Registry)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(int64, string) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(string, string) error); ok {
 		r1 = returnFunc(n, s)
 	} else {
 		r1 = ret.Error(1)
@@ -3838,11 +3838,11 @@ func (_e *MockStore_Expecter) OrgRegistryFind(n interface{}, s interface{}) *Moc
 	return &MockStore_OrgRegistryFind_Call{Call: _e.mock.On("OrgRegistryFind", n, s)}
 }
 
-func (_c *MockStore_OrgRegistryFind_Call) Run(run func(n int64, s string)) *MockStore_OrgRegistryFind_Call {
+func (_c *MockStore_OrgRegistryFind_Call) Run(run func(n string, s string)) *MockStore_OrgRegistryFind_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 int64
+		var arg0 string
 		if args[0] != nil {
-			arg0 = args[0].(int64)
+			arg0 = args[0].(string)
 		}
 		var arg1 string
 		if args[1] != nil {
@@ -3861,7 +3861,7 @@ func (_c *MockStore_OrgRegistryFind_Call) Return(registry *model.Registry, err e
 	return _c
 }
 
-func (_c *MockStore_OrgRegistryFind_Call) RunAndReturn(run func(n int64, s string) (*model.Registry, error)) *MockStore_OrgRegistryFind_Call {
+func (_c *MockStore_OrgRegistryFind_Call) RunAndReturn(run func(n string, s string) (*model.Registry, error)) *MockStore_OrgRegistryFind_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -4003,7 +4003,7 @@ func (_c *MockStore_OrgRepoList_Call) RunAndReturn(run func(org *model.Org, list
 }
 
 // OrgSecretFind provides a mock function for the type MockStore
-func (_mock *MockStore) OrgSecretFind(n int64, s string) (*model.Secret, error) {
+func (_mock *MockStore) OrgSecretFind(n string, s string) (*model.Secret, error) {
 	ret := _mock.Called(n, s)
 
 	if len(ret) == 0 {
@@ -4012,17 +4012,17 @@ func (_mock *MockStore) OrgSecretFind(n int64, s string) (*model.Secret, error) 
 
 	var r0 *model.Secret
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(int64, string) (*model.Secret, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(string, string) (*model.Secret, error)); ok {
 		return returnFunc(n, s)
 	}
-	if returnFunc, ok := ret.Get(0).(func(int64, string) *model.Secret); ok {
+	if returnFunc, ok := ret.Get(0).(func(string, string) *model.Secret); ok {
 		r0 = returnFunc(n, s)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*model.Secret)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(int64, string) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(string, string) error); ok {
 		r1 = returnFunc(n, s)
 	} else {
 		r1 = ret.Error(1)
@@ -4071,7 +4071,7 @@ func (_c *MockStore_OrgSecretFind_Call) RunAndReturn(run func(n int64, s string)
 }
 
 // OrgSecretList provides a mock function for the type MockStore
-func (_mock *MockStore) OrgSecretList(n int64, listOptions *model.ListOptions) ([]*model.Secret, error) {
+func (_mock *MockStore) OrgSecretList(n string, listOptions *model.ListOptions) ([]*model.Secret, error) {
 	ret := _mock.Called(n, listOptions)
 
 	if len(ret) == 0 {
@@ -4080,17 +4080,17 @@ func (_mock *MockStore) OrgSecretList(n int64, listOptions *model.ListOptions) (
 
 	var r0 []*model.Secret
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(int64, *model.ListOptions) ([]*model.Secret, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(string, *model.ListOptions) ([]*model.Secret, error)); ok {
 		return returnFunc(n, listOptions)
 	}
-	if returnFunc, ok := ret.Get(0).(func(int64, *model.ListOptions) []*model.Secret); ok {
+	if returnFunc, ok := ret.Get(0).(func(string, *model.ListOptions) []*model.Secret); ok {
 		r0 = returnFunc(n, listOptions)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*model.Secret)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(int64, *model.ListOptions) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(string, *model.ListOptions) error); ok {
 		r1 = returnFunc(n, listOptions)
 	} else {
 		r1 = ret.Error(1)
@@ -4133,7 +4133,7 @@ func (_c *MockStore_OrgSecretList_Call) Return(secrets []*model.Secret, err erro
 	return _c
 }
 
-func (_c *MockStore_OrgSecretList_Call) RunAndReturn(run func(n int64, listOptions *model.ListOptions) ([]*model.Secret, error)) *MockStore_OrgSecretList_Call {
+func (_c *MockStore_OrgSecretList_Call) RunAndReturn(run func(n string, listOptions *model.ListOptions) ([]*model.Secret, error)) *MockStore_OrgSecretList_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -4190,7 +4190,7 @@ func (_c *MockStore_OrgUpdate_Call) RunAndReturn(run func(org *model.Org) error)
 }
 
 // PermFind provides a mock function for the type MockStore
-func (_mock *MockStore) PermFind(user *model.User, repo *model.Repo) (*model.Perm, error) {
+func (_mock *MockStore) PermFind(user *model.Account, repo *model.Repo) (*model.Perm, error) {
 	ret := _mock.Called(user, repo)
 
 	if len(ret) == 0 {
@@ -4199,17 +4199,17 @@ func (_mock *MockStore) PermFind(user *model.User, repo *model.Repo) (*model.Per
 
 	var r0 *model.Perm
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(*model.User, *model.Repo) (*model.Perm, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(*model.Account, *model.Repo) (*model.Perm, error)); ok {
 		return returnFunc(user, repo)
 	}
-	if returnFunc, ok := ret.Get(0).(func(*model.User, *model.Repo) *model.Perm); ok {
+	if returnFunc, ok := ret.Get(0).(func(*model.Account, *model.Repo) *model.Perm); ok {
 		r0 = returnFunc(user, repo)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*model.Perm)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(*model.User, *model.Repo) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(*model.Account, *model.Repo) error); ok {
 		r1 = returnFunc(user, repo)
 	} else {
 		r1 = ret.Error(1)
@@ -4229,11 +4229,11 @@ func (_e *MockStore_Expecter) PermFind(user interface{}, repo interface{}) *Mock
 	return &MockStore_PermFind_Call{Call: _e.mock.On("PermFind", user, repo)}
 }
 
-func (_c *MockStore_PermFind_Call) Run(run func(user *model.User, repo *model.Repo)) *MockStore_PermFind_Call {
+func (_c *MockStore_PermFind_Call) Run(run func(user *model.Account, repo *model.Repo)) *MockStore_PermFind_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 *model.User
+		var arg0 *model.Account
 		if args[0] != nil {
-			arg0 = args[0].(*model.User)
+			arg0 = args[0].(*model.Account)
 		}
 		var arg1 *model.Repo
 		if args[1] != nil {
@@ -4252,7 +4252,7 @@ func (_c *MockStore_PermFind_Call) Return(perm *model.Perm, err error) *MockStor
 	return _c
 }
 
-func (_c *MockStore_PermFind_Call) RunAndReturn(run func(user *model.User, repo *model.Repo) (*model.Perm, error)) *MockStore_PermFind_Call {
+func (_c *MockStore_PermFind_Call) RunAndReturn(run func(user *model.Account, repo *model.Repo) (*model.Perm, error)) *MockStore_PermFind_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -4754,7 +4754,7 @@ func (_c *MockStore_RegistryUpdate_Call) RunAndReturn(run func(registry *model.R
 }
 
 // RepoList provides a mock function for the type MockStore
-func (_mock *MockStore) RepoList(user *model.User, owned bool, active bool, filter *model.RepoFilter) ([]*model.Repo, error) {
+func (_mock *MockStore) RepoList(user *model.Account, owned bool, active bool, filter *model.RepoFilter) ([]*model.Repo, error) {
 	ret := _mock.Called(user, owned, active, filter)
 
 	if len(ret) == 0 {
@@ -4763,17 +4763,17 @@ func (_mock *MockStore) RepoList(user *model.User, owned bool, active bool, filt
 
 	var r0 []*model.Repo
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(*model.User, bool, bool, *model.RepoFilter) ([]*model.Repo, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(*model.Account, bool, bool, *model.RepoFilter) ([]*model.Repo, error)); ok {
 		return returnFunc(user, owned, active, filter)
 	}
-	if returnFunc, ok := ret.Get(0).(func(*model.User, bool, bool, *model.RepoFilter) []*model.Repo); ok {
+	if returnFunc, ok := ret.Get(0).(func(*model.Account, bool, bool, *model.RepoFilter) []*model.Repo); ok {
 		r0 = returnFunc(user, owned, active, filter)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*model.Repo)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(*model.User, bool, bool, *model.RepoFilter) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(*model.Account, bool, bool, *model.RepoFilter) error); ok {
 		r1 = returnFunc(user, owned, active, filter)
 	} else {
 		r1 = ret.Error(1)
@@ -4795,11 +4795,11 @@ func (_e *MockStore_Expecter) RepoList(user interface{}, owned interface{}, acti
 	return &MockStore_RepoList_Call{Call: _e.mock.On("RepoList", user, owned, active, filter)}
 }
 
-func (_c *MockStore_RepoList_Call) Run(run func(user *model.User, owned bool, active bool, filter *model.RepoFilter)) *MockStore_RepoList_Call {
+func (_c *MockStore_RepoList_Call) Run(run func(user *model.Account, owned bool, active bool, filter *model.RepoFilter)) *MockStore_RepoList_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 *model.User
+		var arg0 *model.Account
 		if args[0] != nil {
-			arg0 = args[0].(*model.User)
+			arg0 = args[0].(*model.Account)
 		}
 		var arg1 bool
 		if args[1] != nil {
@@ -4828,7 +4828,7 @@ func (_c *MockStore_RepoList_Call) Return(repos []*model.Repo, err error) *MockS
 	return _c
 }
 
-func (_c *MockStore_RepoList_Call) RunAndReturn(run func(user *model.User, owned bool, active bool, filter *model.RepoFilter) ([]*model.Repo, error)) *MockStore_RepoList_Call {
+func (_c *MockStore_RepoList_Call) RunAndReturn(run func(user *model.Account, owned bool, active bool, filter *model.RepoFilter) ([]*model.Repo, error)) *MockStore_RepoList_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -4902,7 +4902,7 @@ func (_c *MockStore_RepoListAll_Call) RunAndReturn(run func(active bool, p *mode
 }
 
 // RepoListLatest provides a mock function for the type MockStore
-func (_mock *MockStore) RepoListLatest(user *model.User) ([]*model.Feed, error) {
+func (_mock *MockStore) RepoListLatest(user *model.Account) ([]*model.Feed, error) {
 	ret := _mock.Called(user)
 
 	if len(ret) == 0 {
@@ -4911,17 +4911,17 @@ func (_mock *MockStore) RepoListLatest(user *model.User) ([]*model.Feed, error) 
 
 	var r0 []*model.Feed
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(*model.User) ([]*model.Feed, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(*model.Account) ([]*model.Feed, error)); ok {
 		return returnFunc(user)
 	}
-	if returnFunc, ok := ret.Get(0).(func(*model.User) []*model.Feed); ok {
+	if returnFunc, ok := ret.Get(0).(func(*model.Account) []*model.Feed); ok {
 		r0 = returnFunc(user)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*model.Feed)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(*model.User) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(*model.Account) error); ok {
 		r1 = returnFunc(user)
 	} else {
 		r1 = ret.Error(1)
@@ -4940,11 +4940,11 @@ func (_e *MockStore_Expecter) RepoListLatest(user interface{}) *MockStore_RepoLi
 	return &MockStore_RepoListLatest_Call{Call: _e.mock.On("RepoListLatest", user)}
 }
 
-func (_c *MockStore_RepoListLatest_Call) Run(run func(user *model.User)) *MockStore_RepoListLatest_Call {
+func (_c *MockStore_RepoListLatest_Call) Run(run func(user *model.Account)) *MockStore_RepoListLatest_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 *model.User
+		var arg0 *model.Account
 		if args[0] != nil {
-			arg0 = args[0].(*model.User)
+			arg0 = args[0].(*model.Account)
 		}
 		run(
 			arg0,
@@ -4958,7 +4958,7 @@ func (_c *MockStore_RepoListLatest_Call) Return(feeds []*model.Feed, err error) 
 	return _c
 }
 
-func (_c *MockStore_RepoListLatest_Call) RunAndReturn(run func(user *model.User) ([]*model.Feed, error)) *MockStore_RepoListLatest_Call {
+func (_c *MockStore_RepoListLatest_Call) RunAndReturn(run func(user *model.Account) ([]*model.Feed, error)) *MockStore_RepoListLatest_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -6222,7 +6222,7 @@ func (_c *MockStore_UpdateRepo_Call) RunAndReturn(run func(repo *model.Repo) err
 }
 
 // UpdateUser provides a mock function for the type MockStore
-func (_mock *MockStore) UpdateUser(user *model.User) error {
+func (_mock *MockStore) UpdateUser(user *model.Account) error {
 	ret := _mock.Called(user)
 
 	if len(ret) == 0 {
@@ -6230,7 +6230,7 @@ func (_mock *MockStore) UpdateUser(user *model.User) error {
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(*model.User) error); ok {
+	if returnFunc, ok := ret.Get(0).(func(*model.Account) error); ok {
 		r0 = returnFunc(user)
 	} else {
 		r0 = ret.Error(0)
@@ -6249,11 +6249,11 @@ func (_e *MockStore_Expecter) UpdateUser(user interface{}) *MockStore_UpdateUser
 	return &MockStore_UpdateUser_Call{Call: _e.mock.On("UpdateUser", user)}
 }
 
-func (_c *MockStore_UpdateUser_Call) Run(run func(user *model.User)) *MockStore_UpdateUser_Call {
+func (_c *MockStore_UpdateUser_Call) Run(run func(user *model.Account)) *MockStore_UpdateUser_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 *model.User
+		var arg0 *model.Account
 		if args[0] != nil {
-			arg0 = args[0].(*model.User)
+			arg0 = args[0].(*model.Account)
 		}
 		run(
 			arg0,
@@ -6267,13 +6267,13 @@ func (_c *MockStore_UpdateUser_Call) Return(err error) *MockStore_UpdateUser_Cal
 	return _c
 }
 
-func (_c *MockStore_UpdateUser_Call) RunAndReturn(run func(user *model.User) error) *MockStore_UpdateUser_Call {
+func (_c *MockStore_UpdateUser_Call) RunAndReturn(run func(user *model.Account) error) *MockStore_UpdateUser_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // UserFeed provides a mock function for the type MockStore
-func (_mock *MockStore) UserFeed(user *model.User) ([]*model.Feed, error) {
+func (_mock *MockStore) UserFeed(user *model.Account) ([]*model.Feed, error) {
 	ret := _mock.Called(user)
 
 	if len(ret) == 0 {
@@ -6282,17 +6282,17 @@ func (_mock *MockStore) UserFeed(user *model.User) ([]*model.Feed, error) {
 
 	var r0 []*model.Feed
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(*model.User) ([]*model.Feed, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(*model.Account) ([]*model.Feed, error)); ok {
 		return returnFunc(user)
 	}
-	if returnFunc, ok := ret.Get(0).(func(*model.User) []*model.Feed); ok {
+	if returnFunc, ok := ret.Get(0).(func(*model.Account) []*model.Feed); ok {
 		r0 = returnFunc(user)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*model.Feed)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(*model.User) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(*model.Account) error); ok {
 		r1 = returnFunc(user)
 	} else {
 		r1 = ret.Error(1)
@@ -6311,11 +6311,11 @@ func (_e *MockStore_Expecter) UserFeed(user interface{}) *MockStore_UserFeed_Cal
 	return &MockStore_UserFeed_Call{Call: _e.mock.On("UserFeed", user)}
 }
 
-func (_c *MockStore_UserFeed_Call) Run(run func(user *model.User)) *MockStore_UserFeed_Call {
+func (_c *MockStore_UserFeed_Call) Run(run func(user *model.Account)) *MockStore_UserFeed_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 *model.User
+		var arg0 *model.Account
 		if args[0] != nil {
-			arg0 = args[0].(*model.User)
+			arg0 = args[0].(*model.Account)
 		}
 		run(
 			arg0,
@@ -6329,7 +6329,7 @@ func (_c *MockStore_UserFeed_Call) Return(feeds []*model.Feed, err error) *MockS
 	return _c
 }
 
-func (_c *MockStore_UserFeed_Call) RunAndReturn(run func(user *model.User) ([]*model.Feed, error)) *MockStore_UserFeed_Call {
+func (_c *MockStore_UserFeed_Call) RunAndReturn(run func(user *model.Account) ([]*model.Feed, error)) *MockStore_UserFeed_Call {
 	_c.Call.Return(run)
 	return _c
 }

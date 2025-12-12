@@ -43,7 +43,7 @@ func GetForges(c *gin.Context) {
 	}
 
 	user := session.User(c)
-	if user != nil && user.Admin {
+	if user != nil {
 		c.JSON(http.StatusOK, forges)
 		return
 	}
@@ -66,20 +66,20 @@ func GetForges(c *gin.Context) {
 //	@Param		Authorization	header	string	false	"Insert your personal access token"	default(Bearer <personal access token>)
 //	@Param		forgeId			path	int		true	"the forge's id"
 func GetForge(c *gin.Context) {
-	forgeID, err := strconv.ParseInt(c.Param("forgeId"), 10, 64)
+	forgeID := c.Param("forgeId")
+	internal, err := strconv.ParseBool(c.Param("internal"))
 	if err != nil {
-		_ = c.AbortWithError(http.StatusBadRequest, err)
+		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
-
-	forge, err := store.FromContext(c).ForgeGet(forgeID)
+	forge, err := store.FromContext(c).ForgeGet(forgeID, internal)
 	if err != nil {
 		handleDBError(c, err)
 		return
 	}
 
 	user := session.User(c)
-	if user != nil && user.Admin {
+	if user != nil {
 		c.JSON(http.StatusOK, forge)
 	} else {
 		c.JSON(http.StatusOK, forge.PublicCopy())
@@ -98,21 +98,22 @@ func GetForge(c *gin.Context) {
 //	@Param		forgeData		body	ForgeWithOAuthClientSecret	true	"the forge's data"
 func PatchForge(c *gin.Context) {
 	_store := store.FromContext(c)
-
+	internal, err := strconv.ParseBool(c.Param("internal"))
+	if err != nil {
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
 	in := &model.ForgeWithOAuthClientSecret{}
-	err := c.Bind(in)
+
+	err = c.Bind(in)
 	if err != nil {
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 
-	forgeID, err := strconv.ParseInt(c.Param("forgeId"), 10, 64)
-	if err != nil {
-		_ = c.AbortWithError(http.StatusBadRequest, err)
-		return
-	}
+	forgeID := c.Param("forgeId")
 
-	forge, err := _store.ForgeGet(forgeID)
+	forge, err := _store.ForgeGet(forgeID, internal)
 	if err != nil {
 		handleDBError(c, err)
 		return
@@ -182,13 +183,15 @@ func PostForge(c *gin.Context) {
 func DeleteForge(c *gin.Context) {
 	_store := store.FromContext(c)
 
-	forgeID, err := strconv.ParseInt(c.Param("forgeId"), 10, 64)
+	internal, err := strconv.ParseBool(c.Param("internal"))
 	if err != nil {
-		_ = c.AbortWithError(http.StatusBadRequest, err)
+		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 
-	forge, err := _store.ForgeGet(forgeID)
+	forgeID := c.Param("forgeId")
+
+	forge, err := _store.ForgeGet(forgeID, internal)
 	if err != nil {
 		handleDBError(c, err)
 		return

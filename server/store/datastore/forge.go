@@ -18,7 +18,7 @@ import (
 	"go.woodpecker-ci.org/woodpecker/v3/server/model"
 )
 
-func (s storage) ForgeGet(id int64) (*model.Forge, error) {
+func (s storage) ForgeGet(id string, internal bool) (*model.Forge, error) {
 	forge := new(model.Forge)
 	return forge, wrapGet(s.engine.ID(id).Get(forge))
 }

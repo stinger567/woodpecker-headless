@@ -41,7 +41,7 @@ func NewForge(timeout time.Duration, retries uint) Service {
 	}
 }
 
-func (f *forgeFetcher) Fetch(ctx context.Context, forge forge.Forge, user *model.User, repo *model.Repo, pipeline *model.Pipeline, oldConfigData []*types.FileMeta, restart bool) (files []*types.FileMeta, err error) {
+func (f *forgeFetcher) Fetch(ctx context.Context, forge forge.Forge, user *model.Account, repo *model.Repo, pipeline *model.Pipeline, oldConfigData []*types.FileMeta, restart bool) (files []*types.FileMeta, err error) {
 	// skip fetching if we are restarting and have the old config
 	if restart && len(oldConfigData) > 0 {
 		return oldConfigData, nil
@@ -70,7 +70,7 @@ func (f *forgeFetcher) Fetch(ctx context.Context, forge forge.Forge, user *model
 
 type forgeFetcherContext struct {
 	forge    forge.Forge
-	user     *model.User
+	user     *model.Account
 	repo     *model.Repo
 	pipeline *model.Pipeline
 	timeout  time.Duration
@@ -147,7 +147,7 @@ func (f *forgeFetcherContext) getFirstAvailableConfig(c context.Context, configs
 			// if folder is not supported we will get a "Not implemented" error and continue
 			if err != nil {
 				if !errors.Is(err, types.ErrNotImplemented) && !errors.Is(err, &types.ErrConfigNotFound{}) {
-					log.Error().Err(err).Str("repo", f.repo.FullName).Str("user", f.user.Login).Msgf("could not get folder from forge: %s", err)
+					log.Error().Err(err).Str("repo", f.repo.FullName).Str("user", f.user.AccountName).Msgf("could not get folder from forge: %s", err)
 					forgeErr = append(forgeErr, err)
 				}
 				continue

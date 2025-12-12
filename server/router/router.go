@@ -42,6 +42,7 @@ func Load(middleware ...gin.HandlerFunc) http.Handler {
 	e.Use(header.NoCache)
 	e.Use(header.Options)
 	e.Use(header.Secure)
+	e.Use(session.SetInternal())
 	e.Use(middleware...)
 	e.Use(session.SetUser())
 	e.Use(token.Refresh)
@@ -49,8 +50,7 @@ func Load(middleware ...gin.HandlerFunc) http.Handler {
 	base := e.Group(server.Config.Server.RootPath)
 	{
 
-		base.GET("/logout", api.GetLogout)
-		auth := base.Group("/authorize")
+		auth := base.Group("/authorize/")
 		{
 			auth.GET("", api.HandleAuth)
 			auth.POST("", api.HandleAuth)

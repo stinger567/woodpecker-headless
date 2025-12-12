@@ -102,7 +102,7 @@ type httpRequest struct {
 
 // modelUser is an extension of model.User to marshal all fields to JSON.
 type modelUser struct {
-	User *model.User `json:"user"`
+	User *model.Account `json:"user"`
 
 	ForgeRemoteID model.ForgeRemoteID `json:"forge_remote_id"`
 
@@ -119,7 +119,7 @@ type modelUser struct {
 	Hash string `json:"hash"`
 }
 
-func (m *modelUser) asModel() *model.User {
+func (m *modelUser) asModel() *model.Account {
 	if m == nil {
 		return nil
 	}
@@ -131,7 +131,7 @@ func (m *modelUser) asModel() *model.User {
 	return m.User
 }
 
-func modelUserFromModel(u *model.User) *modelUser {
+func modelUserFromModel(u *model.Account) *modelUser {
 	if u == nil {
 		return nil
 	}
@@ -148,7 +148,7 @@ func modelUserFromModel(u *model.User) *modelUser {
 // modelRepo is an extension of model.Repo to marshal all fields to JSON.
 type modelRepo struct {
 	Repo   *model.Repo `json:"repo"`
-	UserID int64       `json:"user_id"`
+	UserID string      `json:"user_id"`
 	Hash   string      `json:"hash"`
 	Perm   *model.Perm `json:"perm"`
 }
@@ -157,7 +157,7 @@ func (m *modelRepo) asModel() *model.Repo {
 	if m == nil {
 		return nil
 	}
-	m.Repo.UserID = m.UserID
+	m.Repo.ForgeAccountID = m.UserID
 	m.Repo.Hash = m.Hash
 	m.Repo.Perm = m.Perm
 	return m.Repo
@@ -169,7 +169,7 @@ func modelRepoFromModel(r *model.Repo) *modelRepo {
 	}
 	return &modelRepo{
 		Repo:   r,
-		UserID: r.UserID,
+		UserID: r.ForgeAccountID,
 		Hash:   r.Hash,
 		Perm:   r.Perm,
 	}

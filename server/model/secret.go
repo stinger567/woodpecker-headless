@@ -46,8 +46,8 @@ type SecretStore interface {
 // Secret represents a secret variable, such as a password or token.
 type Secret struct {
 	ID     int64          `json:"id"              xorm:"pk autoincr 'id'"`
-	OrgID  int64          `json:"org_id"          xorm:"NOT NULL DEFAULT 0 UNIQUE(s) INDEX 'org_id'"`
-	RepoID int64          `json:"repo_id"         xorm:"NOT NULL DEFAULT 0 UNIQUE(s) INDEX 'repo_id'"`
+	OrgID  string         `json:"org_id"          xorm:"NOT NULL DEFAULT 0 UNIQUE(s) INDEX 'org_id'"`
+	RepoID string         `json:"repo_id"         xorm:"NOT NULL DEFAULT 0 UNIQUE(s) INDEX 'repo_id'"`
 	Name   string         `json:"name"            xorm:"NOT NULL UNIQUE(s) INDEX 'name'"`
 	Value  string         `json:"value,omitempty" xorm:"TEXT 'value'"`
 	Images []string       `json:"images"          xorm:"json 'images'"`
@@ -66,17 +66,17 @@ func (s *Secret) BeforeInsert() {
 
 // Global secret.
 func (s Secret) IsGlobal() bool {
-	return s.RepoID == 0 && s.OrgID == 0
+	return s.RepoID == "" && s.OrgID == ""
 }
 
 // Organization secret.
 func (s Secret) IsOrganization() bool {
-	return s.RepoID == 0 && s.OrgID != 0
+	return s.RepoID == "" && s.OrgID != ""
 }
 
 // Repository secret.
 func (s Secret) IsRepository() bool {
-	return s.RepoID != 0 && s.OrgID == 0
+	return s.RepoID != "" && s.OrgID == ""
 }
 
 var validDockerImageString = regexp.MustCompile(

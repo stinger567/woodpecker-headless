@@ -95,8 +95,8 @@ func Test_github(t *testing.T) {
 }
 
 var (
-	fakeUser = &model.User{
-		Login:       "6543",
+	fakeUser = &model.Account{
+		AccountName: "6543",
 		AccessToken: "cfcd2084",
 	}
 
@@ -155,17 +155,17 @@ func TestHook(t *testing.T) {
 
 	// Create a mock store using the proper mocking pattern
 	mockStore := store_mocks.NewMockStore(t)
-	mockStore.On("GetUser", mock.Anything).Return(&model.User{
-		ID:          1,
-		Login:       "6543",
+	mockStore.On("GetUser", mock.Anything).Return(&model.Account{
+		ForgeID:     1,
+		AccountName: "6543",
 		AccessToken: "token",
 	}, nil)
 	mockStore.On("GetRepoNameFallback", mock.Anything, mock.Anything).Return(&model.Repo{
-		ID:            1,
-		ForgeRemoteID: "1",
-		Owner:         "6543",
-		Name:          "hello-world",
-		UserID:        1,
+		ID:             1,
+		ForgeRemoteID:  "1",
+		Owner:          "6543",
+		Name:           "hello-world",
+		ForgeAccountID: 1,
 	}, nil)
 
 	// Set up context with mock store

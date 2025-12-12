@@ -41,7 +41,7 @@ func (_m *MockService) EXPECT() *MockService_Expecter {
 }
 
 // Fetch provides a mock function for the type MockService
-func (_mock *MockService) Fetch(ctx context.Context, forge1 forge.Forge, user *model.User, repo *model.Repo, pipeline *model.Pipeline, oldConfigData []*types.FileMeta, restart bool) ([]*types.FileMeta, error) {
+func (_mock *MockService) Fetch(ctx context.Context, forge1 forge.Forge, user *model.Account, repo *model.Repo, pipeline *model.Pipeline, oldConfigData []*types.FileMeta, restart bool) ([]*types.FileMeta, error) {
 	ret := _mock.Called(ctx, forge1, user, repo, pipeline, oldConfigData, restart)
 
 	if len(ret) == 0 {
@@ -50,17 +50,17 @@ func (_mock *MockService) Fetch(ctx context.Context, forge1 forge.Forge, user *m
 
 	var r0 []*types.FileMeta
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, forge.Forge, *model.User, *model.Repo, *model.Pipeline, []*types.FileMeta, bool) ([]*types.FileMeta, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, forge.Forge, *model.Account, *model.Repo, *model.Pipeline, []*types.FileMeta, bool) ([]*types.FileMeta, error)); ok {
 		return returnFunc(ctx, forge1, user, repo, pipeline, oldConfigData, restart)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, forge.Forge, *model.User, *model.Repo, *model.Pipeline, []*types.FileMeta, bool) []*types.FileMeta); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, forge.Forge, *model.Account, *model.Repo, *model.Pipeline, []*types.FileMeta, bool) []*types.FileMeta); ok {
 		r0 = returnFunc(ctx, forge1, user, repo, pipeline, oldConfigData, restart)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*types.FileMeta)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, forge.Forge, *model.User, *model.Repo, *model.Pipeline, []*types.FileMeta, bool) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(context.Context, forge.Forge, *model.Account, *model.Repo, *model.Pipeline, []*types.FileMeta, bool) error); ok {
 		r1 = returnFunc(ctx, forge1, user, repo, pipeline, oldConfigData, restart)
 	} else {
 		r1 = ret.Error(1)
@@ -85,7 +85,7 @@ func (_e *MockService_Expecter) Fetch(ctx interface{}, forge1 interface{}, user 
 	return &MockService_Fetch_Call{Call: _e.mock.On("Fetch", ctx, forge1, user, repo, pipeline, oldConfigData, restart)}
 }
 
-func (_c *MockService_Fetch_Call) Run(run func(ctx context.Context, forge1 forge.Forge, user *model.User, repo *model.Repo, pipeline *model.Pipeline, oldConfigData []*types.FileMeta, restart bool)) *MockService_Fetch_Call {
+func (_c *MockService_Fetch_Call) Run(run func(ctx context.Context, forge1 forge.Forge, user *model.Account, repo *model.Repo, pipeline *model.Pipeline, oldConfigData []*types.FileMeta, restart bool)) *MockService_Fetch_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -95,9 +95,9 @@ func (_c *MockService_Fetch_Call) Run(run func(ctx context.Context, forge1 forge
 		if args[1] != nil {
 			arg1 = args[1].(forge.Forge)
 		}
-		var arg2 *model.User
+		var arg2 *model.Account
 		if args[2] != nil {
-			arg2 = args[2].(*model.User)
+			arg2 = args[2].(*model.Account)
 		}
 		var arg3 *model.Repo
 		if args[3] != nil {
@@ -133,7 +133,7 @@ func (_c *MockService_Fetch_Call) Return(configData []*types.FileMeta, err error
 	return _c
 }
 
-func (_c *MockService_Fetch_Call) RunAndReturn(run func(ctx context.Context, forge1 forge.Forge, user *model.User, repo *model.Repo, pipeline *model.Pipeline, oldConfigData []*types.FileMeta, restart bool) ([]*types.FileMeta, error)) *MockService_Fetch_Call {
+func (_c *MockService_Fetch_Call) RunAndReturn(run func(ctx context.Context, forge1 forge.Forge, user *model.Account, repo *model.Repo, pipeline *model.Pipeline, oldConfigData []*types.FileMeta, restart bool) ([]*types.FileMeta, error)) *MockService_Fetch_Call {
 	_c.Call.Return(run)
 	return _c
 }

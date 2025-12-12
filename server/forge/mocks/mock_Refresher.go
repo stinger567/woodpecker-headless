@@ -39,7 +39,7 @@ func (_m *MockRefresher) EXPECT() *MockRefresher_Expecter {
 }
 
 // Refresh provides a mock function for the type MockRefresher
-func (_mock *MockRefresher) Refresh(ctx context.Context, u *model.User) (bool, error) {
+func (_mock *MockRefresher) Refresh(ctx context.Context, u *model.Account) (bool, error) {
 	ret := _mock.Called(ctx, u)
 
 	if len(ret) == 0 {
@@ -48,15 +48,15 @@ func (_mock *MockRefresher) Refresh(ctx context.Context, u *model.User) (bool, e
 
 	var r0 bool
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.User) (bool, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.Account) (bool, error)); ok {
 		return returnFunc(ctx, u)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.User) bool); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.Account) bool); ok {
 		r0 = returnFunc(ctx, u)
 	} else {
 		r0 = ret.Get(0).(bool)
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, *model.User) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(context.Context, *model.Account) error); ok {
 		r1 = returnFunc(ctx, u)
 	} else {
 		r1 = ret.Error(1)
@@ -76,15 +76,15 @@ func (_e *MockRefresher_Expecter) Refresh(ctx interface{}, u interface{}) *MockR
 	return &MockRefresher_Refresh_Call{Call: _e.mock.On("Refresh", ctx, u)}
 }
 
-func (_c *MockRefresher_Refresh_Call) Run(run func(ctx context.Context, u *model.User)) *MockRefresher_Refresh_Call {
+func (_c *MockRefresher_Refresh_Call) Run(run func(ctx context.Context, u *model.Account)) *MockRefresher_Refresh_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 *model.User
+		var arg1 *model.Account
 		if args[1] != nil {
-			arg1 = args[1].(*model.User)
+			arg1 = args[1].(*model.Account)
 		}
 		run(
 			arg0,
@@ -99,7 +99,7 @@ func (_c *MockRefresher_Refresh_Call) Return(b bool, err error) *MockRefresher_R
 	return _c
 }
 
-func (_c *MockRefresher_Refresh_Call) RunAndReturn(run func(ctx context.Context, u *model.User) (bool, error)) *MockRefresher_Refresh_Call {
+func (_c *MockRefresher_Refresh_Call) RunAndReturn(run func(ctx context.Context, u *model.Account) (bool, error)) *MockRefresher_Refresh_Call {
 	_c.Call.Return(run)
 	return _c
 }

@@ -13,6 +13,6 @@ type Admins struct {
 	admins map[string]bool
 }
 
-func (a *Admins) IsAdmin(user *model.User) bool {
-	return a.admins[user.Login]
+func (a *Admins) IsAdmin(user *model.Account) bool {
+	return a.admins[user.AccountName]
 }

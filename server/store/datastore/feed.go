@@ -54,7 +54,7 @@ func (s storage) GetPipelineQueue() ([]*model.Feed, error) {
 	return feed, err
 }
 
-func (s storage) UserFeed(user *model.User) ([]*model.Feed, error) {
+func (s storage) UserFeed(user *model.Account) ([]*model.Feed, error) {
 	feed := make([]*model.Feed, 0, perPage)
 	err := s.engine.Table("repos").
 		Select(s.getFeedSelect()).
@@ -68,7 +68,7 @@ func (s storage) UserFeed(user *model.User) ([]*model.Feed, error) {
 	return feed, err
 }
 
-func (s storage) RepoListLatest(user *model.User) ([]*model.Feed, error) {
+func (s storage) RepoListLatest(user *model.Account) ([]*model.Feed, error) {
 	feed := make([]*model.Feed, 0, perPage)
 
 	err := s.engine.Table("repos").

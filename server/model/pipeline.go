@@ -21,7 +21,7 @@ import (
 
 type Pipeline struct {
 	ID                   int64                  `json:"id"                      xorm:"pk autoincr 'id'"`
-	RepoID               int64                  `json:"-"                       xorm:"UNIQUE(s) INDEX 'repo_id'"`
+	RepoID               string                 `json:"-"                       xorm:"UNIQUE(s) INDEX 'repo_id'"`
 	Number               int64                  `json:"number"                  xorm:"UNIQUE(s) 'number'"`
 	Author               string                 `json:"author"                  xorm:"INDEX 'author'"`
 	Parent               int64                  `json:"parent"                  xorm:"parent"`
@@ -55,6 +55,7 @@ type Pipeline struct {
 	PullRequestMilestone string                 `json:"pr_milestone,omitempty"  xorm:"pr_milestone"`
 	IsPrerelease         bool                   `json:"is_prerelease,omitempty" xorm:"is_prerelease"`
 	FromFork             bool                   `json:"from_fork,omitempty"     xorm:"from_fork"`
+	Internal             bool
 } //	@name	Pipeline
 
 // TableName return database table name for xorm.

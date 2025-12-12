@@ -55,15 +55,15 @@ func SetRepo() gin.HandlerFunc {
 		var repo *model.Repo
 		var err error
 		if _repoID != "" {
-			var repoID int64
-			repoID, err = strconv.ParseInt(_repoID, 10, 64)
+			var repoID string
+			repoID = _repoID
 			if err != nil {
 				c.AbortWithStatus(http.StatusBadRequest)
 				return
 			}
-			repo, err = _store.GetRepo(repoID)
+			repo, err = _store.GetRepo(repoID, IsInternal(c))
 		} else {
-			repo, err = _store.GetRepoName(fullName)
+			repo, err = _store.GetRepoName(fullName, IsInternal(c))
 		}
 
 		if repo != nil && err == nil {
@@ -120,12 +120,12 @@ func SetPerm() gin.HandlerFunc {
 			perm, err = _store.PermFind(user, repo)
 			if err != nil {
 				log.Error().Err(err).Msgf("error fetching permission for %s %s",
-					user.Login, repo.FullName)
+					user.AccountName, repo.FullName)
 			}
 			if time.Unix(perm.Synced, 0).Add(time.Hour).Before(time.Now()) {
 				_repo, err := _forge.Repo(c, user, repo.ForgeRemoteID, repo.Owner, repo.Name)
 				if err == nil {
-					log.Debug().Msgf("synced user permission for %s %s", user.Login, repo.FullName)
+					log.Debug().Msgf("synced user permission for %s %s", user.AccountName, repo.FullName)
 					perm = _repo.Perm
 					perm.Repo = repo
 					perm.RepoID = repo.ID
@@ -155,7 +155,7 @@ func SetPerm() gin.HandlerFunc {
 
 		if user != nil {
 			log.Debug().Msgf("%s granted %+v permission to %s",
-				user.Login, perm, repo.FullName)
+				user.AccountName, perm, repo.FullName)
 		} else {
 			log.Debug().Msgf("guest granted %+v to %s", perm, repo.FullName)
 		}
@@ -178,7 +178,7 @@ func MustPull(c *gin.Context) {
 	if user != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 		log.Debug().Msgf("user %s denied read access to %s",
-			user.Login, c.Request.URL.Path)
+			user.AccountName, c.Request.URL.Path)
 	} else {
 		c.AbortWithStatus(http.StatusUnauthorized)
 		log.Debug().Msgf("guest denied read access to %s %s",
@@ -203,7 +203,7 @@ func MustPush(c *gin.Context) {
 	if user != nil {
 		c.AbortWithStatus(http.StatusNotFound)
 		log.Debug().Msgf("user %s denied write access to %s",
-			user.Login, c.Request.URL.Path)
+			user.AccountName, c.Request.URL.Path)
 	} else {
 		c.AbortWithStatus(http.StatusUnauthorized)
 		log.Debug().Msgf("guest denied write access to %s %s",

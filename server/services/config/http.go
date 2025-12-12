@@ -50,7 +50,7 @@ func NewHTTP(endpoint string, client *utils.Client) Service {
 	return &http{endpoint, client}
 }
 
-func (h *http) Fetch(ctx context.Context, forge forge.Forge, user *model.User, repo *model.Repo, pipeline *model.Pipeline, oldConfigData []*types.FileMeta, _ bool) ([]*types.FileMeta, error) {
+func (h *http) Fetch(ctx context.Context, forge forge.Forge, user *model.Account, repo *model.Repo, pipeline *model.Pipeline, oldConfigData []*types.FileMeta, _ bool) ([]*types.FileMeta, error) {
 	netrc, err := forge.Netrc(user, repo)
 	if err != nil {
 		return nil, fmt.Errorf("could not get Netrc data from forge: %w", err)

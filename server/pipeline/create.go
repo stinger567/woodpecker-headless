@@ -34,9 +34,9 @@ var skipPipelineRegex = regexp.MustCompile(`\[(?i:ci *skip|skip *ci)\]`)
 
 // Create a new pipeline and start it.
 func Create(ctx context.Context, _store store.Store, repo *model.Repo, pipeline *model.Pipeline) (*model.Pipeline, error) {
-	repoUser, err := _store.GetUser(repo.UserID)
+	repoUser, err := _store.GetUser(repo.ForgeAccountID, repo.Internal)
 	if err != nil {
-		msg := fmt.Sprintf("failure to find repo owner via id '%d'", repo.UserID)
+		msg := fmt.Sprintf("failure to find repo owner via id '%d'", repo.ForgeAccountID)
 		log.Error().Err(err).Str("repo", repo.FullName).Msg(msg)
 		return nil, errors.New(msg)
 	}
@@ -80,14 +80,14 @@ func Create(ctx context.Context, _store store.Store, repo *model.Repo, pipeline 
 	configService := server.Config.Services.Manager.ConfigServiceFromRepo(repo)
 	forgeYamlConfigs, configFetchErr := configService.Fetch(ctx, _forge, repoUser, repo, pipeline, nil, false)
 	if errors.Is(configFetchErr, &forge_types.ErrConfigNotFound{}) {
-		log.Debug().Str("repo", repo.FullName).Err(configFetchErr).Msgf("cannot find config '%s' in '%s' with user: '%s'", repo.Config, pipeline.Ref, repoUser.Login)
+		log.Debug().Str("repo", repo.FullName).Err(configFetchErr).Msgf("cannot find config '%s' in '%s' with user: '%s'", repo.Config, pipeline.Ref, repoUser.AccountName)
 		if err := _store.DeletePipeline(pipeline); err != nil {
 			log.Error().Str("repo", repo.FullName).Err(err).Msg("failed to delete pipeline without config")
 		}
 
 		return nil, ErrFiltered
 	} else if configFetchErr != nil {
-		log.Error().Str("repo", repo.FullName).Err(configFetchErr).Msgf("error while fetching config '%s' in '%s' with user: '%s'", repo.Config, pipeline.Ref, repoUser.Login)
+		log.Error().Str("repo", repo.FullName).Err(configFetchErr).Msgf("error while fetching config '%s' in '%s' with user: '%s'", repo.Config, pipeline.Ref, repoUser.AccountName)
 		return nil, updatePipelineWithErr(ctx, _forge, _store, pipeline, repo, repoUser, fmt.Errorf("could not load config from forge: %w", configFetchErr))
 	}
 
@@ -151,7 +151,7 @@ func Create(ctx context.Context, _store store.Store, repo *model.Repo, pipeline 
 	return pipeline, nil
 }
 
-func updatePipelineWithErr(ctx context.Context, _forge forge.Forge, _store store.Store, pipeline *model.Pipeline, repo *model.Repo, repoUser *model.User, err error) error {
+func updatePipelineWithErr(ctx context.Context, _forge forge.Forge, _store store.Store, pipeline *model.Pipeline, repo *model.Repo, repoUser *model.Account, err error) error {
 	_pipeline, err := UpdateToStatusError(_store, *pipeline, err)
 	if err != nil {
 		return err
@@ -164,7 +164,7 @@ func updatePipelineWithErr(ctx context.Context, _forge forge.Forge, _store store
 	return nil
 }
 
-func updatePipelinePending(ctx context.Context, _forge forge.Forge, _store store.Store, pipeline *model.Pipeline, repo *model.Repo, repoUser *model.User) error {
+func updatePipelinePending(ctx context.Context, _forge forge.Forge, _store store.Store, pipeline *model.Pipeline, repo *model.Repo, repoUser *model.Account) error {
 	_pipeline, err := UpdateToStatusPending(_store, *pipeline, "")
 	if err != nil {
 		return err

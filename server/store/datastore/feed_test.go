@@ -23,12 +23,11 @@ import (
 )
 
 func TestGetPipelineQueue(t *testing.T) {
-	store, closer := newTestStore(t, new(model.Repo), new(model.User), new(model.Perm), new(model.Pipeline), new(model.Org))
+	store, closer := newTestStore(t, new(model.Repo), new(model.Account), new(model.Perm), new(model.Pipeline), new(model.Org))
 	defer closer()
 
-	user := &model.User{
-		Login:       "joe",
-		Email:       "foo@bar.com",
+	user := &model.Account{
+		AccountName: "joe",
 		AccessToken: "e42080dddf012c718e476da161d21ad5",
 	}
 
@@ -81,12 +80,11 @@ func TestGetPipelineQueue(t *testing.T) {
 }
 
 func TestUserFeed(t *testing.T) {
-	store, closer := newTestStore(t, new(model.Repo), new(model.User), new(model.Perm), new(model.Pipeline), new(model.Org))
+	store, closer := newTestStore(t, new(model.Repo), new(model.Account), new(model.Perm), new(model.Pipeline), new(model.Org))
 	defer closer()
 
-	user := &model.User{
-		Login:       "joe",
-		Email:       "foo@bar.com",
+	user := &model.Account{
+		AccountName: "joe",
 		AccessToken: "e42080dddf012c718e476da161d21ad5",
 	}
 
@@ -126,12 +124,11 @@ func TestUserFeed(t *testing.T) {
 }
 
 func TestRepoListLatest(t *testing.T) {
-	store, closer := newTestStore(t, new(model.Repo), new(model.User), new(model.Perm), new(model.Pipeline), new(model.Org))
+	store, closer := newTestStore(t, new(model.Repo), new(model.Account), new(model.Perm), new(model.Pipeline), new(model.Org))
 	defer closer()
 
-	user := &model.User{
-		Login:       "joe",
-		Email:       "foo@bar.com",
+	user := &model.Account{
+		AccountName: "joe",
 		AccessToken: "e42080dddf012c718e476da161d21ad5",
 	}
 

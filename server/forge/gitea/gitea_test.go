@@ -59,7 +59,7 @@ func Test_gitea(t *testing.T) {
 		forge, _ := New(Opts{})
 		netrc, _ := forge.Netrc(fakeUser, fakeRepo)
 		assert.Equal(t, "gitea.com", netrc.Machine)
-		assert.Equal(t, fakeUser.Login, netrc.Login)
+		assert.Equal(t, fakeUser.AccountName, netrc.Login)
 		assert.Equal(t, fakeUser.AccessToken, netrc.Password)
 		assert.Equal(t, model.ForgeTypeGitea, netrc.Type)
 	})
@@ -137,13 +137,13 @@ func Test_gitea(t *testing.T) {
 }
 
 var (
-	fakeUser = &model.User{
-		Login:       "someuser",
+	fakeUser = &model.Account{
+		AccountName: "someuser",
 		AccessToken: "cfcd2084",
 	}
 
-	fakeUserNoRepos = &model.User{
-		Login:       "someuser",
+	fakeUserNoRepos = &model.Account{
+		AccountName: "someuser",
 		AccessToken: "repos_not_found",
 	}
 

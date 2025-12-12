@@ -30,7 +30,7 @@ func NewCombined(services ...Service) Service {
 	return &combined{services: services}
 }
 
-func (c *combined) Fetch(ctx context.Context, forge forge.Forge, user *model.User, repo *model.Repo, pipeline *model.Pipeline, oldConfigData []*types.FileMeta, restart bool) (files []*types.FileMeta, err error) {
+func (c *combined) Fetch(ctx context.Context, forge forge.Forge, user *model.Account, repo *model.Repo, pipeline *model.Pipeline, oldConfigData []*types.FileMeta, restart bool) (files []*types.FileMeta, err error) {
 	files = oldConfigData
 	for _, s := range c.services {
 		files, err = s.Fetch(ctx, forge, user, repo, pipeline, files, restart)

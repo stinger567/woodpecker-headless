@@ -28,7 +28,7 @@ import (
 )
 
 // Approve update the status to pending for a blocked pipeline so it can be executed.
-func Approve(ctx context.Context, store store.Store, currentPipeline *model.Pipeline, user *model.User, repo *model.Repo) (*model.Pipeline, error) {
+func Approve(ctx context.Context, store store.Store, currentPipeline *model.Pipeline, user *model.Account, repo *model.Repo) (*model.Pipeline, error) {
 	if currentPipeline.Status != model.StatusBlocked {
 		return nil, ErrBadRequest{Msg: fmt.Sprintf("cannot approve a pipeline with status %s", currentPipeline.Status)}
 	}
@@ -56,7 +56,7 @@ func Approve(ctx context.Context, store store.Store, currentPipeline *model.Pipe
 		return nil, fmt.Errorf("error: loading workflows. %w", err)
 	}
 
-	if currentPipeline, err = UpdateToStatusPending(store, *currentPipeline, user.Login); err != nil {
+	if currentPipeline, err = UpdateToStatusPending(store, *currentPipeline, user.AccountName); err != nil {
 		return nil, fmt.Errorf("error updating pipeline. %w", err)
 	}
 

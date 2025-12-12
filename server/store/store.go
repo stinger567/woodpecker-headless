@@ -21,16 +21,25 @@ import (
 // TODO: CreateX func should return new object to not indirect let storage change an existing object (alter ID etc...)
 
 type Store interface {
+	// Users
+	// GetUser gets a user by unique ID.
+	GetUser(string, bool) (*model.Account, error)
+	// GetUserByRemoteID gets a user by remote ID.
+	GetUserByRemoteID(string, model.ForgeRemoteID, bool) (*model.Account, error)
+	// GetUserByLogin gets a user by its login name.
+	GetUserByLogin(string, string, bool) (*model.Account, error)
+	// UpdateUser updates a user account.
+	UpdateUser(*model.Account) error
 
 	// Repos
 	// GetRepo gets a repo by unique ID.
-	GetRepo(int64) (*model.Repo, error)
+	GetRepo(string, bool) (*model.Repo, error)
 	// GetRepoForgeID gets a repo by its forge ID.
-	GetRepoForgeID(model.ForgeRemoteID) (*model.Repo, error)
+	GetRepoForgeID(model.ForgeRemoteID, bool) (*model.Repo, error)
 	// GetRepoNameFallback gets the repo by its forge ID and if this doesn't exist by its full name.
-	GetRepoNameFallback(remoteID model.ForgeRemoteID, fullName string) (*model.Repo, error)
+	GetRepoNameFallback(remoteID model.ForgeRemoteID, fullName string, internal bool) (*model.Repo, error)
 	// GetRepoName gets a repo by its full name.
-	GetRepoName(string) (*model.Repo, error)
+	GetRepoName(string, bool) (*model.Repo, error)
 	// GetRepoCount gets a count of all repositories in the system.
 	GetRepoCount() (int64, error)
 	// CreateRepo creates a new repository.
@@ -60,7 +69,7 @@ type Store interface {
 	// GetPipelineList gets a list of pipelines for the repository
 	GetPipelineList(*model.Repo, *model.ListOptions, *model.PipelineFilter) ([]*model.Pipeline, error)
 	// GetRepoLatestPipelines gets the latest pipelines for the given repo IDs.
-	GetRepoLatestPipelines([]int64) ([]*model.Pipeline, error)
+	GetRepoLatestPipelines([]string) ([]*model.Pipeline, error)
 	// GetActivePipelineList gets a list of the active pipelines for the repository
 	GetActivePipelineList(repo *model.Repo) ([]*model.Pipeline, error)
 	// GetPipelineQueue gets a list of pipelines in queue.
@@ -75,15 +84,15 @@ type Store interface {
 	DeletePipeline(*model.Pipeline) error
 
 	// Feeds
-	UserFeed(*model.User) ([]*model.Feed, error)
+	UserFeed(*model.Account) ([]*model.Feed, error)
 
 	// Repositories
-	RepoList(user *model.User, owned, active bool, filter *model.RepoFilter) ([]*model.Repo, error)
-	RepoListLatest(*model.User) ([]*model.Feed, error)
+	RepoList(user *model.Account, owned, active bool, filter *model.RepoFilter) ([]*model.Repo, error)
+	RepoListLatest(*model.Account) ([]*model.Feed, error)
 	RepoListAll(active bool, p *model.ListOptions) ([]*model.Repo, error)
 
 	// Permissions
-	PermFind(user *model.User, repo *model.Repo) (*model.Perm, error)
+	PermFind(user *model.Account, repo *model.Repo) (*model.Perm, error)
 	PermUpsert(perm *model.Perm) error
 
 	// Configs
@@ -98,8 +107,8 @@ type Store interface {
 	SecretCreate(*model.Secret) error
 	SecretUpdate(*model.Secret) error
 	SecretDelete(*model.Secret) error
-	OrgSecretFind(int64, string) (*model.Secret, error)
-	OrgSecretList(int64, *model.ListOptions) ([]*model.Secret, error)
+	OrgSecretFind(string, string) (*model.Secret, error)
+	OrgSecretList(string, *model.ListOptions) ([]*model.Secret, error)
 	GlobalSecretFind(string) (*model.Secret, error)
 	GlobalSecretList(*model.ListOptions) ([]*model.Secret, error)
 
@@ -110,8 +119,8 @@ type Store interface {
 	RegistryCreate(*model.Registry) error
 	RegistryUpdate(*model.Registry) error
 	RegistryDelete(*model.Registry) error
-	OrgRegistryFind(int64, string) (*model.Registry, error)
-	OrgRegistryList(int64, *model.ListOptions) ([]*model.Registry, error)
+	OrgRegistryFind(string, string) (*model.Registry, error)
+	OrgRegistryList(string, *model.ListOptions) ([]*model.Registry, error)
 	GlobalRegistryFind(string) (*model.Registry, error)
 	GlobalRegistryList(*model.ListOptions) ([]*model.Registry, error)
 
@@ -152,7 +161,7 @@ type Store interface {
 
 	// Forge
 	ForgeCreate(*model.Forge) error
-	ForgeGet(int64) (*model.Forge, error)
+	ForgeGet(string, bool) (*model.Forge, error)
 	ForgeList(p *model.ListOptions) ([]*model.Forge, error)
 	ForgeUpdate(*model.Forge) error
 	ForgeDelete(*model.Forge) error
@@ -164,7 +173,7 @@ type Store interface {
 	AgentList(p *model.ListOptions) ([]*model.Agent, error)
 	AgentUpdate(*model.Agent) error
 	AgentDelete(*model.Agent) error
-	AgentListForOrg(orgID int64, opt *model.ListOptions) ([]*model.Agent, error)
+	AgentListForOrg(orgID string, opt *model.ListOptions) ([]*model.Agent, error)
 
 	// Workflow
 	WorkflowGetTree(*model.Pipeline) ([]*model.Workflow, error)
@@ -175,10 +184,10 @@ type Store interface {
 
 	// Org
 	OrgCreate(*model.Org) error
-	OrgGet(int64) (*model.Org, error)
-	OrgFindByName(string, int64) (*model.Org, error)
+	OrgGet(string, bool) (*model.Org, error)
+	OrgFindByName(string, string, bool) (*model.Org, error)
 	OrgUpdate(*model.Org) error
-	OrgDelete(int64) error
+	OrgDelete(string) error
 	OrgList(*model.ListOptions) ([]*model.Org, error)
 
 	// Org repos

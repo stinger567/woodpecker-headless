@@ -314,7 +314,7 @@ func (_c *MockService_GlobalSecretUpdate_Call) RunAndReturn(run func(secret *mod
 }
 
 // OrgSecretCreate provides a mock function for the type MockService
-func (_mock *MockService) OrgSecretCreate(n int64, secret *model.Secret) error {
+func (_mock *MockService) OrgSecretCreate(n string, secret *model.Secret) error {
 	ret := _mock.Called(n, secret)
 
 	if len(ret) == 0 {
@@ -322,7 +322,7 @@ func (_mock *MockService) OrgSecretCreate(n int64, secret *model.Secret) error {
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(int64, *model.Secret) error); ok {
+	if returnFunc, ok := ret.Get(0).(func(string, *model.Secret) error); ok {
 		r0 = returnFunc(n, secret)
 	} else {
 		r0 = ret.Error(0)
@@ -342,11 +342,11 @@ func (_e *MockService_Expecter) OrgSecretCreate(n interface{}, secret interface{
 	return &MockService_OrgSecretCreate_Call{Call: _e.mock.On("OrgSecretCreate", n, secret)}
 }
 
-func (_c *MockService_OrgSecretCreate_Call) Run(run func(n int64, secret *model.Secret)) *MockService_OrgSecretCreate_Call {
+func (_c *MockService_OrgSecretCreate_Call) Run(run func(n string, secret *model.Secret)) *MockService_OrgSecretCreate_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 int64
+		var arg0 string
 		if args[0] != nil {
-			arg0 = args[0].(int64)
+			arg0 = args[0].(string)
 		}
 		var arg1 *model.Secret
 		if args[1] != nil {
@@ -365,13 +365,13 @@ func (_c *MockService_OrgSecretCreate_Call) Return(err error) *MockService_OrgSe
 	return _c
 }
 
-func (_c *MockService_OrgSecretCreate_Call) RunAndReturn(run func(n int64, secret *model.Secret) error) *MockService_OrgSecretCreate_Call {
+func (_c *MockService_OrgSecretCreate_Call) RunAndReturn(run func(n string, secret *model.Secret) error) *MockService_OrgSecretCreate_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // OrgSecretDelete provides a mock function for the type MockService
-func (_mock *MockService) OrgSecretDelete(n int64, s string) error {
+func (_mock *MockService) OrgSecretDelete(n string, s string) error {
 	ret := _mock.Called(n, s)
 
 	if len(ret) == 0 {
@@ -379,7 +379,7 @@ func (_mock *MockService) OrgSecretDelete(n int64, s string) error {
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(int64, string) error); ok {
+	if returnFunc, ok := ret.Get(0).(func(string, string) error); ok {
 		r0 = returnFunc(n, s)
 	} else {
 		r0 = ret.Error(0)
@@ -428,7 +428,7 @@ func (_c *MockService_OrgSecretDelete_Call) RunAndReturn(run func(n int64, s str
 }
 
 // OrgSecretFind provides a mock function for the type MockService
-func (_mock *MockService) OrgSecretFind(n int64, s string) (*model.Secret, error) {
+func (_mock *MockService) OrgSecretFind(n string, s string) (*model.Secret, error) {
 	ret := _mock.Called(n, s)
 
 	if len(ret) == 0 {
@@ -437,17 +437,17 @@ func (_mock *MockService) OrgSecretFind(n int64, s string) (*model.Secret, error
 
 	var r0 *model.Secret
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(int64, string) (*model.Secret, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(string, string) (*model.Secret, error)); ok {
 		return returnFunc(n, s)
 	}
-	if returnFunc, ok := ret.Get(0).(func(int64, string) *model.Secret); ok {
+	if returnFunc, ok := ret.Get(0).(func(string, string) *model.Secret); ok {
 		r0 = returnFunc(n, s)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*model.Secret)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(int64, string) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(string, string) error); ok {
 		r1 = returnFunc(n, s)
 	} else {
 		r1 = ret.Error(1)

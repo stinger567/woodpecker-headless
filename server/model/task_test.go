@@ -51,7 +51,7 @@ func TestTask_GetLabels(t *testing.T) {
 		repo := &Repo{
 			FullName: "test/repo",
 			ID:       123,
-			OrgID:    456,
+			OrgID:    "456",
 		}
 
 		err := task.ApplyLabelsFromRepo(repo)
@@ -73,7 +73,7 @@ func TestTask_GetLabels(t *testing.T) {
 		repo := &Repo{
 			FullName: "test/repo",
 			ID:       123,
-			OrgID:    456,
+			OrgID:    "456",
 		}
 
 		err := task.ApplyLabelsFromRepo(repo)

@@ -56,8 +56,8 @@ func Test_GitLab(t *testing.T) {
 
 	client := load(env)
 
-	user := model.User{
-		Login:         "test_user",
+	user := model.Account{
+		AccountName:   "test_user",
 		AccessToken:   "e3b0c44298fc1c149afbf4c8996fb",
 		ForgeRemoteID: "3",
 	}

@@ -98,7 +98,7 @@ func (s storage) GetPipelineList(repo *model.Repo, p *model.ListOptions, f *mode
 }
 
 // GetRepoLatestPipelines get the latest pipeline for each repo.
-func (s storage) GetRepoLatestPipelines(repoIDs []int64) ([]*model.Pipeline, error) {
+func (s storage) GetRepoLatestPipelines(repoIDs []string) ([]*model.Pipeline, error) {
 	pipelines := make([]*model.Pipeline, 0, len(repoIDs))
 
 	pipelineIDs := make([]int64, 0, len(repoIDs))

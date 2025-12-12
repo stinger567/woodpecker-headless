@@ -26,11 +26,11 @@ type Service interface {
 	RegistryUpdate(*model.Repo, *model.Registry) error
 	RegistryDelete(*model.Repo, string) error
 	// Organization registries
-	OrgRegistryFind(int64, string) (*model.Registry, error)
-	OrgRegistryList(int64, *model.ListOptions) ([]*model.Registry, error)
-	OrgRegistryCreate(int64, *model.Registry) error
-	OrgRegistryUpdate(int64, *model.Registry) error
-	OrgRegistryDelete(int64, string) error
+	OrgRegistryFind(string, string) (*model.Registry, error)
+	OrgRegistryList(string, *model.ListOptions) ([]*model.Registry, error)
+	OrgRegistryCreate(string, *model.Registry) error
+	OrgRegistryUpdate(string, *model.Registry) error
+	OrgRegistryDelete(string, string) error
 	// Global registries
 	GlobalRegistryFind(string) (*model.Registry, error)
 	GlobalRegistryList(*model.ListOptions) ([]*model.Registry, error)

@@ -106,7 +106,7 @@ func runCron(ctx context.Context, store store.Store, cron *model.Cron, now time.
 }
 
 func CreatePipeline(ctx context.Context, store store.Store, cron *model.Cron) (*model.Repo, *model.Pipeline, error) {
-	repo, err := store.GetRepo(cron.RepoID)
+	repo, err := store.GetRepo(cron.RepoID, cron.Internal)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -121,7 +121,7 @@ func CreatePipeline(ctx context.Context, store store.Store, cron *model.Cron) (*
 		cron.Branch = repo.Branch
 	}
 
-	creator, err := store.GetUser(cron.CreatorID)
+	creator, err := store.GetUser(cron.CreatorID, cron.Internal)
 	if err != nil {
 		return nil, nil, err
 	}

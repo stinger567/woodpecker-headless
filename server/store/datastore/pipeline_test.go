@@ -27,10 +27,10 @@ import (
 
 func TestPipelines(t *testing.T) {
 	repo := &model.Repo{
-		UserID:   1,
-		FullName: "bradrydzewski/test",
-		Owner:    "bradrydzewski",
-		Name:     "test",
+		ForgeAccountID: 1,
+		FullName:       "bradrydzewski/test",
+		Owner:          "bradrydzewski",
+		Name:           "test",
 	}
 
 	store, closer := newTestStore(t, new(model.Repo), new(model.Step), new(model.Pipeline))
@@ -126,10 +126,10 @@ func TestPipelines(t *testing.T) {
 
 func TestPipelineListFilter(t *testing.T) {
 	repo := &model.Repo{
-		UserID:   1,
-		FullName: "bradrydzewski/test",
-		Owner:    "bradrydzewski",
-		Name:     "test",
+		ForgeAccountID: 1,
+		FullName:       "bradrydzewski/test",
+		Owner:          "bradrydzewski",
+		Name:           "test",
 	}
 
 	store, closer := newTestStore(t, new(model.Repo), new(model.Step), new(model.Pipeline))

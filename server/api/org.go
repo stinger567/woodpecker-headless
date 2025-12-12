@@ -86,7 +86,7 @@ func GetOrgPermissions(c *gin.Context) {
 		return
 	}
 
-	if (org.IsUser && org.Name == user.Login) || (user.Admin && !org.IsUser) {
+	if (org.IsUser && org.Name == user.AccountName) || (!org.IsUser) {
 		c.JSON(http.StatusOK, &model.OrgPerm{
 			Member: true,
 			Admin:  true,
@@ -127,7 +127,7 @@ func LookupOrg(c *gin.Context) {
 
 	orgFullName := strings.TrimLeft(c.Param("org_full_name"), "/")
 
-	org, err := _store.OrgFindByName(orgFullName, user.ForgeID)
+	org, err := _store.OrgFindByName(orgFullName, user.ForgeID, user.Internal)
 	if err != nil {
 		handleDBError(c, err)
 		return
@@ -141,10 +141,10 @@ func LookupOrg(c *gin.Context) {
 			return
 		}
 
-		if !user.Admin && org.Name != user.Login {
+		if org.Name != user.AccountName {
 			c.AbortWithStatus(http.StatusNotFound)
 			return
-		} else if !user.Admin {
+		} else {
 			perm, err := server.Config.Services.Membership.Get(c, _forge, user, org.Name)
 			if err != nil {
 				log.Error().Err(err).Msg("failed to check membership")
@@ -160,26 +160,4 @@ func LookupOrg(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, org)
-}
-
-// DeleteOrg
-//
-//	@Summary		Delete an organization
-//	@Description	Deletes the given org. Requires admin rights.
-//	@Router			/orgs/{id} [delete]
-//	@Produce		plain
-//	@Success		204
-//	@Tags			Orgs
-//	@Param			Authorization	header	string	true	"Insert your personal access token"	default(Bearer <personal access token>)
-//	@Param			id				path	string	true	"the org's id"
-func DeleteOrg(c *gin.Context) {
-	_store := store.FromContext(c)
-	org := session.Org(c)
-
-	if err := _store.OrgDelete(org.ID); err != nil {
-		handleDBError(c, err)
-		return
-	}
-
-	c.Status(http.StatusNoContent)
 }

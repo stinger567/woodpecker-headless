@@ -80,7 +80,7 @@ func (c *config) URL() string {
 
 // Login authenticates an account with Bitbucket using the oauth2 protocol. The
 // Bitbucket account details are returned when the user is successfully authenticated.
-func (c *config) Login(ctx context.Context, req *forge_types.OAuthRequest) (*model.User, string, error) {
+func (c *config) Login(ctx context.Context, req *forge_types.OAuthRequest) (*model.Account, string, error) {
 	config := c.newOAuth2Config()
 	redirectURL := config.AuthCodeURL(req.State)
 
@@ -115,7 +115,7 @@ func (c *config) Auth(ctx context.Context, token, secret string) (string, error)
 
 // Refresh refreshes the Bitbucket oauth2 access token. If the token is
 // refreshed the user is updated and a true value is returned.
-func (c *config) Refresh(ctx context.Context, user *model.User) (bool, error) {
+func (c *config) Refresh(ctx context.Context, user *model.Account) (bool, error) {
 	config := c.newOAuth2Config()
 	source := config.TokenSource(
 		ctx, &oauth2.Token{RefreshToken: user.RefreshToken})
@@ -132,7 +132,7 @@ func (c *config) Refresh(ctx context.Context, user *model.User) (bool, error) {
 }
 
 // Teams returns a list of all team membership for the Bitbucket account.
-func (c *config) Teams(ctx context.Context, u *model.User, p *model.ListOptions) ([]*model.Team, error) {
+func (c *config) Teams(ctx context.Context, u *model.Account, p *model.ListOptions) ([]*model.Team, error) {
 	setListOptions(p)
 
 	opts := &internal.ListWorkspacesOpts{
@@ -148,7 +148,7 @@ func (c *config) Teams(ctx context.Context, u *model.User, p *model.ListOptions)
 }
 
 // Repo returns the named Bitbucket repository.
-func (c *config) Repo(ctx context.Context, u *model.User, remoteID model.ForgeRemoteID, owner, name string) (*model.Repo, error) {
+func (c *config) Repo(ctx context.Context, u *model.Account, remoteID model.ForgeRemoteID, owner, name string) (*model.Repo, error) {
 	if remoteID.IsValid() {
 		name = string(remoteID)
 	}
@@ -178,7 +178,7 @@ func (c *config) Repo(ctx context.Context, u *model.User, remoteID model.ForgeRe
 
 // Repos returns a list of all repositories for Bitbucket account, including
 // organization repositories.
-func (c *config) Repos(ctx context.Context, u *model.User, p *model.ListOptions) ([]*model.Repo, error) {
+func (c *config) Repos(ctx context.Context, u *model.Account, p *model.ListOptions) ([]*model.Repo, error) {
 	setListOptions(p)
 
 	client := c.newClient(ctx, u)
@@ -218,7 +218,7 @@ func (c *config) Repos(ctx context.Context, u *model.User, p *model.ListOptions)
 }
 
 // File fetches the file from the Bitbucket repository and returns its contents.
-func (c *config) File(ctx context.Context, u *model.User, r *model.Repo, p *model.Pipeline, f string) ([]byte, error) {
+func (c *config) File(ctx context.Context, u *model.Account, r *model.Repo, p *model.Pipeline, f string) ([]byte, error) {
 	config, err := c.newClient(ctx, u).FindSource(r.Owner, r.Name, p.Commit, f)
 	if err != nil {
 		var rspErr internal.Error
@@ -233,7 +233,7 @@ func (c *config) File(ctx context.Context, u *model.User, r *model.Repo, p *mode
 }
 
 // Dir fetches a folder from the bitbucket repository.
-func (c *config) Dir(ctx context.Context, u *model.User, r *model.Repo, p *model.Pipeline, f string) ([]*forge_types.FileMeta, error) {
+func (c *config) Dir(ctx context.Context, u *model.Account, r *model.Repo, p *model.Pipeline, f string) ([]*forge_types.FileMeta, error) {
 	var page *string
 	repoPathFiles := []*forge_types.FileMeta{}
 	client := c.newClient(ctx, u)
@@ -287,7 +287,7 @@ func (c *config) Dir(ctx context.Context, u *model.User, r *model.Repo, p *model
 }
 
 // Status creates a pipeline status for the Bitbucket commit.
-func (c *config) Status(ctx context.Context, user *model.User, repo *model.Repo, pipeline *model.Pipeline, workflow *model.Workflow) error {
+func (c *config) Status(ctx context.Context, user *model.Account, repo *model.Repo, pipeline *model.Pipeline, workflow *model.Workflow) error {
 	status := internal.PipelineStatus{
 		State: convertStatus(workflow.State),
 		Desc:  common.GetPipelineStatusDescription(workflow.State),
@@ -300,7 +300,7 @@ func (c *config) Status(ctx context.Context, user *model.User, repo *model.Repo,
 // Activate activates the repository by registering repository push hooks with
 // the Bitbucket repository. Prior to registering hook, previously created hooks
 // are deleted.
-func (c *config) Activate(ctx context.Context, u *model.User, r *model.Repo, link string) error {
+func (c *config) Activate(ctx context.Context, u *model.Account, r *model.Repo, link string) error {
 	rawURL, err := url.Parse(link)
 	if err != nil {
 		return err
@@ -317,7 +317,7 @@ func (c *config) Activate(ctx context.Context, u *model.User, r *model.Repo, lin
 
 // Deactivate deactivates the repository be removing repository push hooks from
 // the Bitbucket repository.
-func (c *config) Deactivate(ctx context.Context, u *model.User, r *model.Repo, link string) error {
+func (c *config) Deactivate(ctx context.Context, u *model.Account, r *model.Repo, link string) error {
 	client := c.newClient(ctx, u)
 
 	hooks, err := shared_utils.Paginate(func(page int) ([]*internal.Hook, error) {
@@ -341,7 +341,7 @@ func (c *config) Deactivate(ctx context.Context, u *model.User, r *model.Repo, l
 
 // Netrc returns a netrc file capable of authenticating Bitbucket requests and
 // cloning Bitbucket repositories.
-func (c *config) Netrc(u *model.User, _ *model.Repo) (*model.Netrc, error) {
+func (c *config) Netrc(u *model.Account, _ *model.Repo) (*model.Netrc, error) {
 	return &model.Netrc{
 		Machine:  "bitbucket.org",
 		Login:    "x-token-auth",
@@ -351,7 +351,7 @@ func (c *config) Netrc(u *model.User, _ *model.Repo) (*model.Netrc, error) {
 }
 
 // Branches returns the names of all branches for the named repository.
-func (c *config) Branches(ctx context.Context, u *model.User, r *model.Repo, p *model.ListOptions) ([]string, error) {
+func (c *config) Branches(ctx context.Context, u *model.Account, r *model.Repo, p *model.ListOptions) ([]string, error) {
 	setListOptions(p)
 
 	opts := internal.ListOpts{Page: p.Page, PageLen: p.PerPage}
@@ -367,7 +367,7 @@ func (c *config) Branches(ctx context.Context, u *model.User, r *model.Repo, p *
 }
 
 // BranchHead returns the sha of the head (latest commit) of the specified branch.
-func (c *config) BranchHead(ctx context.Context, u *model.User, r *model.Repo, branch string) (*model.Commit, error) {
+func (c *config) BranchHead(ctx context.Context, u *model.Account, r *model.Repo, branch string) (*model.Commit, error) {
 	commit, err := c.newClient(ctx, u).GetBranchHead(r.Owner, r.Name, branch)
 	if err != nil {
 		return nil, err
@@ -379,7 +379,7 @@ func (c *config) BranchHead(ctx context.Context, u *model.User, r *model.Repo, b
 }
 
 // PullRequests returns the pull requests of the named repository.
-func (c *config) PullRequests(ctx context.Context, u *model.User, r *model.Repo, p *model.ListOptions) ([]*model.PullRequest, error) {
+func (c *config) PullRequests(ctx context.Context, u *model.Account, r *model.Repo, p *model.ListOptions) ([]*model.PullRequest, error) {
 	setListOptions(p)
 
 	opts := internal.ListOpts{Page: p.Page, PageLen: p.PerPage}
@@ -405,7 +405,7 @@ func (c *config) Hook(ctx context.Context, req *http.Request) (*model.Repo, *mod
 		return nil, nil, err
 	}
 
-	u, err := common.RepoUserForgeID(ctx, repo.ForgeRemoteID)
+	u, err := common.RepoUserForgeID(ctx, repo.ForgeRemoteID, false)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -420,15 +420,15 @@ func (c *config) Hook(ctx context.Context, req *http.Request) (*model.Repo, *mod
 
 // OrgMembership returns if user is member of organization and if user
 // is admin/owner in this organization.
-func (c *config) OrgMembership(ctx context.Context, u *model.User, owner string) (*model.OrgPerm, error) {
-	perm, err := c.newClient(ctx, u).GetUserWorkspaceMembership(owner, u.Login)
+func (c *config) OrgMembership(ctx context.Context, u *model.Account, owner string) (*model.OrgPerm, error) {
+	perm, err := c.newClient(ctx, u).GetUserWorkspaceMembership(owner, u.AccountName)
 	if err != nil {
 		return nil, err
 	}
 	return &model.OrgPerm{Member: perm != "", Admin: perm == "owner"}, nil
 }
 
-func (c *config) Org(ctx context.Context, u *model.User, owner string) (*model.Org, error) {
+func (c *config) Org(ctx context.Context, u *model.Account, owner string) (*model.Org, error) {
 	workspace, err := c.newClient(ctx, u).GetWorkspace(owner)
 	if err != nil {
 		return nil, err
@@ -441,7 +441,7 @@ func (c *config) Org(ctx context.Context, u *model.User, owner string) (*model.O
 }
 
 // helper function to return the bitbucket oauth2 client.
-func (c *config) newClient(ctx context.Context, u *model.User) *internal.Client {
+func (c *config) newClient(ctx context.Context, u *model.Account) *internal.Client {
 	if u == nil {
 		return c.newClientToken(ctx, "", "")
 	}

@@ -27,7 +27,7 @@ const (
 )
 
 type Forge struct {
-	ID                int64          `json:"id"                           xorm:"pk autoincr 'id'"`
+	ID                string         `json:"id"                           xorm:"pk autoincr 'id'"`
 	Type              ForgeType      `json:"type"                         xorm:"VARCHAR(250)"`
 	URL               string         `json:"url"                          xorm:"VARCHAR(500) 'url'"`
 	OAuthClientID     string         `json:"client,omitempty"             xorm:"VARCHAR(250) 'oauth_client_id'"`
@@ -35,6 +35,8 @@ type Forge struct {
 	SkipVerify        bool           `json:"skip_verify,omitempty"        xorm:"bool"`
 	OAuthHost         string         `json:"oauth_host,omitempty"         xorm:"VARCHAR(250) 'oauth_host'"` // public url for oauth if different from url
 	AdditionalOptions map[string]any `json:"additional_options,omitempty" xorm:"json"`
+
+	Internal bool
 } //	@name	Forge
 
 // TableName returns the database table name for xorm.

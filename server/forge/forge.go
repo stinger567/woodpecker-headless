@@ -70,7 +70,7 @@ type Forge interface {
 	//  3. Second call with OAuthRequest.Code returns (User, redirectURL, nil)
 	//
 	// Returned User must contain: Login, Email, Avatar, AccessToken, RefreshToken, Expiry, ForgeRemoteID
-	Login(ctx context.Context, r *types.OAuthRequest) (*model.User, string, error)
+	Login(ctx context.Context, r *types.OAuthRequest) (*model.Account, string, error)
 
 	// Auth validates an access token and returns the associated username.
 	Auth(ctx context.Context, token, secret string) (string, error)
@@ -79,7 +79,7 @@ type Forge interface {
 	// May return empty slice if forge doesn't support teams/organizations.
 	// Used to determine if an user is member of an team/organization.
 	// Should support pagination via ListOptions.
-	Teams(ctx context.Context, u *model.User, p *model.ListOptions) ([]*model.Team, error)
+	Teams(ctx context.Context, u *model.Account, p *model.ListOptions) ([]*model.Team, error)
 
 	// Repo fetches a single repository.
 	//
@@ -88,52 +88,52 @@ type Forge interface {
 	// - Fallback to owner/name if remoteID empty
 	//
 	// Must verify user has at least read access.
-	Repo(ctx context.Context, u *model.User, remoteID model.ForgeRemoteID, owner, name string) (*model.Repo, error)
+	Repo(ctx context.Context, u *model.Account, remoteID model.ForgeRemoteID, owner, name string) (*model.Repo, error)
 
 	// Repos fetches all repositories accessible to the user.
 	// Should include user's permission level in Repo.Perm.
 	// Should support pagination via ListOptions.
-	Repos(ctx context.Context, u *model.User, p *model.ListOptions) ([]*model.Repo, error)
+	Repos(ctx context.Context, u *model.Account, p *model.ListOptions) ([]*model.Repo, error)
 
 	// File fetches a single file at a specific commit.
 	// Primary method for retrieving pipeline configuration files.
 	// Must fetch at specific commit (b.Commit), not branch head.
-	File(ctx context.Context, u *model.User, r *model.Repo, b *model.Pipeline, fileName string) ([]byte, error)
+	File(ctx context.Context, u *model.Account, r *model.Repo, b *model.Pipeline, fileName string) ([]byte, error)
 
 	// Dir fetches all files in a directory at a specific commit.
 	// Supports pipeline configurations split across multiple files.
 	// Should return files only.
-	Dir(ctx context.Context, u *model.User, r *model.Repo, b *model.Pipeline, dirName string) ([]*types.FileMeta, error)
+	Dir(ctx context.Context, u *model.Account, r *model.Repo, b *model.Pipeline, dirName string) ([]*types.FileMeta, error)
 
 	// Status sends workflow status updates to the forge.
 	// Provides visual feedback in forge UI (commit checks, PR status).
 	// Failures should be logged but not block pipeline execution.
-	Status(ctx context.Context, u *model.User, r *model.Repo, b *model.Pipeline, p *model.Workflow) error
+	Status(ctx context.Context, u *model.Account, r *model.Repo, b *model.Pipeline, p *model.Workflow) error
 
 	// Netrc generates .netrc credentials for cloning private repositories.
 	// May receive nil user for public repos.
-	Netrc(u *model.User, r *model.Repo) (*model.Netrc, error)
+	Netrc(u *model.Account, r *model.Repo) (*model.Netrc, error)
 
 	// Activate creates a webhook pointing to Woodpecker.
 	// Called when user activates a repository.
 	// Must verify user has admin access. Should set webhook secret from r.Hash.
 	// Configure webhook for all events Hook() can parse.
-	Activate(ctx context.Context, u *model.User, r *model.Repo, link string) error
+	Activate(ctx context.Context, u *model.Account, r *model.Repo, link string) error
 
 	// Deactivate removes the webhook.
 	// Should ignore if webhook doesn't exist anymore.
-	Deactivate(ctx context.Context, u *model.User, r *model.Repo, link string) error
+	Deactivate(ctx context.Context, u *model.Account, r *model.Repo, link string) error
 
 	// Branches returns all branch names in the repository.
 	// Should support pagination via ListOptions.
-	Branches(ctx context.Context, u *model.User, r *model.Repo, p *model.ListOptions) ([]string, error)
+	Branches(ctx context.Context, u *model.Account, r *model.Repo, p *model.ListOptions) ([]string, error)
 
 	// BranchHead returns the latest commit SHA for a branch.
-	BranchHead(ctx context.Context, u *model.User, r *model.Repo, branch string) (*model.Commit, error)
+	BranchHead(ctx context.Context, u *model.Account, r *model.Repo, branch string) (*model.Commit, error)
 
 	// PullRequests returns all open pull requests.
 	// Should support pagination via ListOptions.
-	PullRequests(ctx context.Context, u *model.User, r *model.Repo, p *model.ListOptions) ([]*model.PullRequest, error)
+	PullRequests(ctx context.Context, u *model.Account, r *model.Repo, p *model.ListOptions) ([]*model.PullRequest, error)
 
 	// Hook parses incoming webhook and returns pipeline data.
 	//
@@ -155,9 +155,9 @@ type Forge interface {
 
 	// OrgMembership checks if user is member of organization and their permission.
 	// Should return (Member: false, Admin: false) if not a member.
-	OrgMembership(ctx context.Context, u *model.User, org string) (*model.OrgPerm, error)
+	OrgMembership(ctx context.Context, u *model.Account, org string) (*model.OrgPerm, error)
 
 	// Org fetches organization details.
 	// If identifier is a user, return org with IsUser: true.
-	Org(ctx context.Context, u *model.User, org string) (*model.Org, error)
+	Org(ctx context.Context, u *model.Account, org string) (*model.Org, error)
 }

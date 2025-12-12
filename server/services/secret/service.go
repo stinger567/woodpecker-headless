@@ -26,11 +26,11 @@ type Service interface {
 	SecretUpdate(*model.Repo, *model.Secret) error
 	SecretDelete(*model.Repo, string) error
 	// Organization secrets
-	OrgSecretFind(int64, string) (*model.Secret, error)
-	OrgSecretList(int64, *model.ListOptions) ([]*model.Secret, error)
-	OrgSecretCreate(int64, *model.Secret) error
-	OrgSecretUpdate(int64, *model.Secret) error
-	OrgSecretDelete(int64, string) error
+	OrgSecretFind(string, string) (*model.Secret, error)
+	OrgSecretList(string, *model.ListOptions) ([]*model.Secret, error)
+	OrgSecretCreate(string, *model.Secret) error
+	OrgSecretUpdate(string, *model.Secret) error
+	OrgSecretDelete(string, string) error
 	// Global secrets
 	GlobalSecretFind(string) (*model.Secret, error)
 	GlobalSecretList(*model.ListOptions) ([]*model.Secret, error)

@@ -113,7 +113,7 @@ func (g *GitLab) oauth2Config(ctx context.Context) (*oauth2.Config, context.Cont
 
 // Login authenticates the session and returns the
 // forge user details.
-func (g *GitLab) Login(ctx context.Context, req *forge_types.OAuthRequest) (*model.User, string, error) {
+func (g *GitLab) Login(ctx context.Context, req *forge_types.OAuthRequest) (*model.Account, string, error) {
 	config, oauth2Ctx := g.oauth2Config(ctx)
 	redirectURL := config.AuthCodeURL(req.State)
 
@@ -137,17 +137,12 @@ func (g *GitLab) Login(ctx context.Context, req *forge_types.OAuthRequest) (*mod
 		return nil, redirectURL, err
 	}
 
-	user := &model.User{
-		Login:         login.Username,
-		Email:         login.Email,
-		Avatar:        login.AvatarURL,
+	user := &model.Account{
+		AccountName:   login.Username,
 		ForgeRemoteID: model.ForgeRemoteID(fmt.Sprint(login.ID)),
 		AccessToken:   token.AccessToken,
 		RefreshToken:  token.RefreshToken,
 		Expiry:        token.Expiry.UTC().Unix(),
-	}
-	if !strings.HasPrefix(user.Avatar, "http") {
-		user.Avatar = g.url + "/" + login.AvatarURL
 	}
 
 	return user, redirectURL, nil
@@ -155,7 +150,7 @@ func (g *GitLab) Login(ctx context.Context, req *forge_types.OAuthRequest) (*mod
 
 // Refresh refreshes the Gitlab oauth2 access token. If the token is
 // refreshed the user is updated and a true value is returned.
-func (g *GitLab) Refresh(ctx context.Context, user *model.User) (bool, error) {
+func (g *GitLab) Refresh(ctx context.Context, user *model.Account) (bool, error) {
 	config, oauth2Ctx := g.oauth2Config(ctx)
 	config.RedirectURL = ""
 
@@ -191,7 +186,7 @@ func (g *GitLab) Auth(ctx context.Context, token, _ string) (string, error) {
 }
 
 // Teams fetches a list of team memberships from the forge.
-func (g *GitLab) Teams(ctx context.Context, user *model.User, p *model.ListOptions) ([]*model.Team, error) {
+func (g *GitLab) Teams(ctx context.Context, user *model.Account, p *model.ListOptions) ([]*model.Team, error) {
 	client, err := newClient(g.url, user.AccessToken, g.skipVerify)
 	if err != nil {
 		return nil, err
@@ -261,7 +256,7 @@ func (g *GitLab) getInheritedProjectMember(ctx context.Context, client *gitlab.C
 }
 
 // Repo fetches the repository from the forge.
-func (g *GitLab) Repo(ctx context.Context, user *model.User, remoteID model.ForgeRemoteID, owner, name string) (*model.Repo, error) {
+func (g *GitLab) Repo(ctx context.Context, user *model.Account, remoteID model.ForgeRemoteID, owner, name string) (*model.Repo, error) {
 	client, err := newClient(g.url, user.AccessToken, g.skipVerify)
 	if err != nil {
 		return nil, err
@@ -286,7 +281,7 @@ func (g *GitLab) Repo(ctx context.Context, user *model.User, remoteID model.Forg
 }
 
 // Repos fetches a list of repos from the forge.
-func (g *GitLab) Repos(ctx context.Context, user *model.User, p *model.ListOptions) ([]*model.Repo, error) {
+func (g *GitLab) Repos(ctx context.Context, user *model.Account, p *model.ListOptions) ([]*model.Repo, error) {
 	client, err := newClient(g.url, user.AccessToken, g.skipVerify)
 	if err != nil {
 		return nil, err
@@ -336,7 +331,7 @@ func (g *GitLab) Repos(ctx context.Context, user *model.User, p *model.ListOptio
 	return repos, err
 }
 
-func (g *GitLab) PullRequests(ctx context.Context, u *model.User, r *model.Repo, p *model.ListOptions) ([]*model.PullRequest, error) {
+func (g *GitLab) PullRequests(ctx context.Context, u *model.Account, r *model.Repo, p *model.ListOptions) ([]*model.PullRequest, error) {
 	token := common.UserToken(ctx, r, u)
 	client, err := newClient(g.url, token, g.skipVerify)
 	if err != nil {
@@ -368,7 +363,7 @@ func (g *GitLab) PullRequests(ctx context.Context, u *model.User, r *model.Repo,
 }
 
 // File fetches a file from the forge repository and returns in string format.
-func (g *GitLab) File(ctx context.Context, user *model.User, repo *model.Repo, pipeline *model.Pipeline, fileName string) ([]byte, error) {
+func (g *GitLab) File(ctx context.Context, user *model.Account, repo *model.Repo, pipeline *model.Pipeline, fileName string) ([]byte, error) {
 	client, err := newClient(g.url, user.AccessToken, g.skipVerify)
 	if err != nil {
 		return nil, err
@@ -385,7 +380,7 @@ func (g *GitLab) File(ctx context.Context, user *model.User, repo *model.Repo, p
 }
 
 // Dir fetches a folder from the forge repository.
-func (g *GitLab) Dir(ctx context.Context, user *model.User, repo *model.Repo, pipeline *model.Pipeline, path string) ([]*forge_types.FileMeta, error) {
+func (g *GitLab) Dir(ctx context.Context, user *model.Account, repo *model.Repo, pipeline *model.Pipeline, path string) ([]*forge_types.FileMeta, error) {
 	client, err := newClient(g.url, user.AccessToken, g.skipVerify)
 	if err != nil {
 		return nil, err
@@ -437,7 +432,7 @@ func (g *GitLab) Dir(ctx context.Context, user *model.User, repo *model.Repo, pi
 }
 
 // Status sends the commit status back to gitlab.
-func (g *GitLab) Status(ctx context.Context, user *model.User, repo *model.Repo, pipeline *model.Pipeline, workflow *model.Workflow) error {
+func (g *GitLab) Status(ctx context.Context, user *model.Account, repo *model.Repo, pipeline *model.Pipeline, workflow *model.Workflow) error {
 	client, err := newClient(g.url, user.AccessToken, g.skipVerify)
 	if err != nil {
 		return err
@@ -461,7 +456,7 @@ func (g *GitLab) Status(ctx context.Context, user *model.User, repo *model.Repo,
 // Netrc returns a netrc file capable of authenticating Gitlab requests and
 // cloning Gitlab repositories. The netrc will use the global machine account
 // when configured.
-func (g *GitLab) Netrc(u *model.User, r *model.Repo) (*model.Netrc, error) {
+func (g *GitLab) Netrc(u *model.Account, r *model.Repo) (*model.Netrc, error) {
 	login := ""
 	token := ""
 
@@ -495,7 +490,7 @@ func (g *GitLab) getTokenAndWebURL(link string) (token, webURL string, err error
 
 // Activate activates a repository by adding a Post-commit hook and
 // a Public Deploy key, if applicable.
-func (g *GitLab) Activate(ctx context.Context, user *model.User, repo *model.Repo, link string) error {
+func (g *GitLab) Activate(ctx context.Context, user *model.Account, repo *model.Repo, link string) error {
 	client, err := newClient(g.url, user.AccessToken, g.skipVerify)
 	if err != nil {
 		return err
@@ -530,7 +525,7 @@ func (g *GitLab) Activate(ctx context.Context, user *model.User, repo *model.Rep
 
 // Deactivate removes a repository by removing all the post-commit hooks
 // which are equal to link and removing the SSH deploy key.
-func (g *GitLab) Deactivate(ctx context.Context, user *model.User, repo *model.Repo, link string) error {
+func (g *GitLab) Deactivate(ctx context.Context, user *model.Account, repo *model.Repo, link string) error {
 	client, err := newClient(g.url, user.AccessToken, g.skipVerify)
 	if err != nil {
 		return err
@@ -578,7 +573,7 @@ func (g *GitLab) Deactivate(ctx context.Context, user *model.User, repo *model.R
 }
 
 // Branches returns the names of all branches for the named repository.
-func (g *GitLab) Branches(ctx context.Context, user *model.User, repo *model.Repo, p *model.ListOptions) ([]string, error) {
+func (g *GitLab) Branches(ctx context.Context, user *model.Account, repo *model.Repo, p *model.ListOptions) ([]string, error) {
 	token := common.UserToken(ctx, repo, user)
 	client, err := newClient(g.url, token, g.skipVerify)
 	if err != nil {
@@ -605,7 +600,7 @@ func (g *GitLab) Branches(ctx context.Context, user *model.User, repo *model.Rep
 }
 
 // BranchHead returns the sha of the head (latest commit) of the specified branch.
-func (g *GitLab) BranchHead(ctx context.Context, u *model.User, r *model.Repo, branch string) (*model.Commit, error) {
+func (g *GitLab) BranchHead(ctx context.Context, u *model.Account, r *model.Repo, branch string) (*model.Commit, error) {
 	token := common.UserToken(ctx, r, u)
 	client, err := newClient(g.url, token, g.skipVerify)
 	if err != nil {
@@ -671,7 +666,7 @@ func (g *GitLab) Hook(ctx context.Context, req *http.Request) (*model.Repo, *mod
 
 // OrgMembership returns if user is member of organization and if user
 // is admin/owner in this organization.
-func (g *GitLab) OrgMembership(ctx context.Context, u *model.User, owner string) (*model.OrgPerm, error) {
+func (g *GitLab) OrgMembership(ctx context.Context, u *model.Account, owner string) (*model.OrgPerm, error) {
 	client, err := newClient(g.url, u.AccessToken, g.skipVerify)
 	if err != nil {
 		return nil, err
@@ -712,7 +707,7 @@ func (g *GitLab) OrgMembership(ctx context.Context, u *model.User, owner string)
 			return nil, err
 		}
 		for _, member := range members {
-			if member.Username == u.Login {
+			if member.Username == u.AccountName {
 				return &model.OrgPerm{Member: true, Admin: member.AccessLevel >= gitlab.OwnerPermissions}, nil
 			}
 		}
@@ -725,7 +720,7 @@ func (g *GitLab) OrgMembership(ctx context.Context, u *model.User, owner string)
 	return &model.OrgPerm{}, nil
 }
 
-func (g *GitLab) Org(ctx context.Context, u *model.User, owner string) (*model.Org, error) {
+func (g *GitLab) Org(ctx context.Context, u *model.Account, owner string) (*model.Org, error) {
 	client, err := newClient(g.url, u.AccessToken, g.skipVerify)
 	if err != nil {
 		return nil, err
@@ -782,12 +777,12 @@ func (g *GitLab) loadMetadataFromMergeRequest(ctx context.Context, tmpRepo *mode
 		return pipeline, nil
 	}
 
-	repo, err := _store.GetRepoNameFallback(tmpRepo.ForgeRemoteID, tmpRepo.FullName)
+	repo, err := _store.GetRepoNameFallback(tmpRepo.ForgeRemoteID, tmpRepo.FullName, false)
 	if err != nil {
 		return nil, err
 	}
 
-	user, err := _store.GetUser(repo.UserID)
+	user, err := _store.GetUser(repo.ForgeAccountID, false)
 	if err != nil {
 		return nil, err
 	}

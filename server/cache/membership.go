@@ -29,7 +29,7 @@ import (
 // MembershipService is a service to check for user membership.
 type MembershipService interface {
 	// Get returns if the user is a member of the organization.
-	Get(ctx context.Context, _forge forge.Forge, u *model.User, org string) (*model.OrgPerm, error)
+	Get(ctx context.Context, _forge forge.Forge, u *model.Account, org string) (*model.OrgPerm, error)
 }
 
 type membershipCache struct {
@@ -48,7 +48,7 @@ func NewMembershipService(_store store.Store) MembershipService {
 }
 
 // Get returns if the user is a member of the organization.
-func (c *membershipCache) Get(ctx context.Context, _forge forge.Forge, u *model.User, org string) (*model.OrgPerm, error) {
+func (c *membershipCache) Get(ctx context.Context, _forge forge.Forge, u *model.Account, org string) (*model.OrgPerm, error) {
 	key := fmt.Sprintf("%s-%s", u.ForgeRemoteID, org)
 	item := c.cache.Get(key)
 	if item != nil && !item.IsExpired() {

@@ -45,7 +45,7 @@ func ExtractHostFromCloneURL(cloneURL string) (string, error) {
 	return host, nil
 }
 
-func UserToken(ctx context.Context, r *model.Repo, u *model.User) string {
+func UserToken(ctx context.Context, r *model.Repo, u *model.Account) string {
 	if u != nil {
 		return u.AccessToken
 	}
@@ -58,7 +58,7 @@ func UserToken(ctx context.Context, r *model.Repo, u *model.User) string {
 	return user.AccessToken
 }
 
-func RepoUser(ctx context.Context, r *model.Repo) (*model.User, error) {
+func RepoUser(ctx context.Context, r *model.Repo) (*model.Account, error) {
 	_store, ok := store.TryFromContext(ctx)
 	if !ok {
 		return nil, errors.New("could not get store from context")
@@ -67,19 +67,19 @@ func RepoUser(ctx context.Context, r *model.Repo) (*model.User, error) {
 		log.Error().Msg("cannot get user token by empty repo")
 		return nil, errors.New("cannot get user token by empty repo")
 	}
-	user, err := _store.GetUser(r.UserID)
+	user, err := _store.GetUser(r.ForgeAccountID, r.Internal)
 	if err != nil {
 		return nil, err
 	}
 	return user, nil
 }
 
-func RepoUserForgeID(ctx context.Context, repoForgeID model.ForgeRemoteID) (*model.User, error) {
+func RepoUserForgeID(ctx context.Context, repoForgeID model.ForgeRemoteID, internal bool) (*model.Account, error) {
 	_store, ok := store.TryFromContext(ctx)
 	if !ok {
 		return nil, errors.New("could not get store from context")
 	}
-	r, err := _store.GetRepoForgeID(repoForgeID)
+	r, err := _store.GetRepoForgeID(repoForgeID, internal)
 	if err != nil {
 		return nil, err
 	}

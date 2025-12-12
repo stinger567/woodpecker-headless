@@ -28,7 +28,7 @@ import (
 )
 
 // Restart a pipeline by creating a new one out of the old and start it.
-func Restart(ctx context.Context, store store.Store, lastPipeline *model.Pipeline, user *model.User, repo *model.Repo, envs map[string]string) (*model.Pipeline, error) {
+func Restart(ctx context.Context, store store.Store, lastPipeline *model.Pipeline, user *model.Account, repo *model.Repo, envs map[string]string) (*model.Pipeline, error) {
 	forge, err := server.Config.Services.Manager.ForgeFromRepo(repo)
 	if err != nil {
 		msg := fmt.Sprintf("failure to load forge for repo '%s'", repo.FullName)

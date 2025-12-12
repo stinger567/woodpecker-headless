@@ -164,7 +164,7 @@ func TestPostAgent(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
 		c.Set("store", mockStore)
-		c.Set("user", &model.User{ID: 1})
+		c.Set("user", &model.Account{ID: 1})
 		c.Request, _ = http.NewRequest(http.MethodPost, "/", strings.NewReader(`{"name":"new-agent"}`))
 		c.Request.Header.Set("Content-Type", "application/json")
 
@@ -251,9 +251,8 @@ func TestPostOrgAgent(t *testing.T) {
 		c.Set("store", mockStore)
 
 		// Set up a non-admin user
-		c.Set("user", &model.User{
-			ID:    1,
-			Admin: false,
+		c.Set("user", &model.Account{
+			ID: 1,
 		})
 
 		c.Params = gin.Params{{Key: "org_id", Value: "1"}}

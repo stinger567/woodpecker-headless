@@ -36,7 +36,7 @@ func (s storage) orgCreate(org *model.Org, sess *xorm.Session) error {
 	return err
 }
 
-func (s storage) OrgGet(id int64) (*model.Org, error) {
+func (s storage) OrgGet(id string, internal bool) (*model.Org, error) {
 	org := new(model.Org)
 	return org, wrapGet(s.engine.ID(id).Get(org))
 }
@@ -51,11 +51,11 @@ func (s storage) orgUpdate(sess *xorm.Session, org *model.Org) error {
 	return err
 }
 
-func (s storage) OrgDelete(id int64) error {
+func (s storage) OrgDelete(id string) error {
 	return s.orgDelete(s.engine.NewSession(), id)
 }
 
-func (s storage) orgDelete(sess *xorm.Session, id int64) error {
+func (s storage) orgDelete(sess *xorm.Session, id string) error {
 	if _, err := sess.Where("org_id = ?", id).Delete(new(model.Secret)); err != nil {
 		return err
 	}
@@ -74,11 +74,11 @@ func (s storage) orgDelete(sess *xorm.Session, id int64) error {
 	return wrapDelete(sess.ID(id).Delete(new(model.Org)))
 }
 
-func (s storage) OrgFindByName(name string, forgeID int64) (*model.Org, error) {
-	return s.orgFindByName(s.engine.NewSession(), name, forgeID)
+func (s storage) OrgFindByName(name string, forgeID string, internal bool) (*model.Org, error) {
+	return s.orgFindByName(s.engine.NewSession(), name, forgeID, internal)
 }
 
-func (s storage) orgFindByName(sess *xorm.Session, name string, forgeID int64) (*model.Org, error) {
+func (s storage) orgFindByName(sess *xorm.Session, name string, forgeID string, internal bool) (*model.Org, error) {
 	// sanitize
 	org := new(model.Org)
 	return org, wrapGet(sess.Where("LOWER(name) = ?", strings.ToLower(name)).And("forge_id = ?", forgeID).Get(org))

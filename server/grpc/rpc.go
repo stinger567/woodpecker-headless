@@ -172,7 +172,7 @@ func (s *RPC) Update(c context.Context, strWorkflowID string, state rpc.StepStat
 		return errors.New(msg)
 	}
 
-	repo, err := s.store.GetRepo(currentPipeline.RepoID)
+	repo, err := s.store.GetRepo(currentPipeline.RepoID, currentPipeline.Internal)
 	if err != nil {
 		log.Error().Err(err).Msgf("cannot find repo with id %d", currentPipeline.RepoID)
 		return err
@@ -239,7 +239,7 @@ func (s *RPC) Init(c context.Context, strWorkflowID string, state rpc.WorkflowSt
 		return err
 	}
 
-	repo, err := s.store.GetRepo(currentPipeline.RepoID)
+	repo, err := s.store.GetRepo(currentPipeline.RepoID, currentPipeline.Internal)
 	if err != nil {
 		log.Error().Err(err).Msgf("cannot find repo with id %d", currentPipeline.RepoID)
 		return err
@@ -310,7 +310,7 @@ func (s *RPC) Done(c context.Context, strWorkflowID string, state rpc.WorkflowSt
 		return err
 	}
 
-	repo, err := s.store.GetRepo(currentPipeline.RepoID)
+	repo, err := s.store.GetRepo(currentPipeline.RepoID, currentPipeline.Internal)
 	if err != nil {
 		log.Error().Err(err).Msgf("cannot find repo with id %d", currentPipeline.RepoID)
 		return err
@@ -525,7 +525,7 @@ func (s *RPC) checkAgentPermissionByWorkflow(_ context.Context, agent *model.Age
 	}
 
 	if repo == nil {
-		repo, err = s.store.GetRepo(pipeline.RepoID)
+		repo, err = s.store.GetRepo(pipeline.RepoID, pipeline.Internal)
 		if err != nil {
 			log.Error().Err(err).Msgf("cannot find repo with id %d", pipeline.RepoID)
 			return err
@@ -536,8 +536,8 @@ func (s *RPC) checkAgentPermissionByWorkflow(_ context.Context, agent *model.Age
 		return nil
 	}
 
-	msg := fmt.Sprintf("agent '%d' is not allowed to interact with repo[%d] '%s'", agent.ID, repo.ID, repo.FullName)
-	log.Error().Int64("repoId", repo.ID).Msg(msg)
+	msg := fmt.Sprintf("agent '%d' is not allowed to interact with repo[%s] '%s'", agent.ID, repo.ID, repo.FullName)
+	log.Error().Str("repoId", repo.ID).Msg(msg)
 	return errors.New(msg)
 }
 
@@ -552,9 +552,9 @@ func (s *RPC) completeChildrenIfParentCompleted(completedWorkflow *model.Workflo
 }
 
 func (s *RPC) updateForgeStatus(ctx context.Context, repo *model.Repo, pipeline *model.Pipeline, workflow *model.Workflow) {
-	user, err := s.store.GetUser(repo.UserID)
+	user, err := s.store.GetUser(repo.ForgeAccountID, repo.Internal)
 	if err != nil {
-		log.Error().Err(err).Msgf("cannot get user with id '%d'", repo.UserID)
+		log.Error().Err(err).Msgf("cannot get user with id '%d'", repo.ForgeAccountID)
 		return
 	}
 

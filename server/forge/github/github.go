@@ -104,7 +104,7 @@ func (c *client) URL() string {
 }
 
 // Login authenticates the session and returns the forge user details.
-func (c *client) Login(ctx context.Context, req *forge_types.OAuthRequest) (*model.User, string, error) {
+func (c *client) Login(ctx context.Context, req *forge_types.OAuthRequest) (*model.Account, string, error) {
 	config := c.newConfig()
 	redirectURL := config.AuthCodeURL(req.State)
 
@@ -127,22 +127,11 @@ func (c *client) Login(ctx context.Context, req *forge_types.OAuthRequest) (*mod
 		return nil, redirectURL, err
 	}
 
-	emails, _, err := client.Users.ListEmails(ctx, nil)
-	if err != nil {
-		return nil, redirectURL, err
-	}
-	email := matchingEmail(emails, c.API)
-	if email == nil {
-		return nil, redirectURL, fmt.Errorf("no verified Email address for GitHub account")
-	}
-
-	return &model.User{
-		Login:         user.GetLogin(),
-		Email:         email.GetEmail(),
+	return &model.Account{
+		AccountName:   user.GetLogin(),
 		AccessToken:   token.AccessToken,
 		RefreshToken:  token.RefreshToken,
 		Expiry:        token.Expiry.UTC().Unix(),
-		Avatar:        user.GetAvatarURL(),
 		ForgeRemoteID: model.ForgeRemoteID(fmt.Sprint(user.GetID())),
 	}, redirectURL, nil
 }
@@ -159,7 +148,7 @@ func (c *client) Auth(ctx context.Context, token, _ string) (string, error) {
 
 // Refresh refreshes the Gitlab oauth2 access token. If the token is
 // refreshed the user is updated and a true value is returned.
-func (c *client) Refresh(ctx context.Context, user *model.User) (bool, error) {
+func (c *client) Refresh(ctx context.Context, user *model.Account) (bool, error) {
 	// when using Github oAuth app no refresh token is provided
 	if user.RefreshToken == "" {
 		return false, nil
@@ -185,7 +174,7 @@ func (c *client) Refresh(ctx context.Context, user *model.User) (bool, error) {
 }
 
 // Teams returns a list of all team membership for the GitHub account.
-func (c *client) Teams(ctx context.Context, u *model.User, p *model.ListOptions) ([]*model.Team, error) {
+func (c *client) Teams(ctx context.Context, u *model.Account, p *model.ListOptions) ([]*model.Team, error) {
 	client := c.newClientToken(ctx, u.AccessToken)
 
 	list, _, err := client.Organizations.List(ctx, "", &github.ListOptions{
@@ -199,7 +188,7 @@ func (c *client) Teams(ctx context.Context, u *model.User, p *model.ListOptions)
 }
 
 // Repo returns the GitHub repository.
-func (c *client) Repo(ctx context.Context, u *model.User, id model.ForgeRemoteID, owner, name string) (*model.Repo, error) {
+func (c *client) Repo(ctx context.Context, u *model.Account, id model.ForgeRemoteID, owner, name string) (*model.Repo, error) {
 	client := c.newClientToken(ctx, u.AccessToken)
 
 	if id.IsValid() {
@@ -223,7 +212,7 @@ func (c *client) Repo(ctx context.Context, u *model.User, id model.ForgeRemoteID
 
 // Repos returns a list of all repositories for GitHub account, including
 // organization repositories.
-func (c *client) Repos(ctx context.Context, u *model.User, p *model.ListOptions) ([]*model.Repo, error) {
+func (c *client) Repos(ctx context.Context, u *model.Account, p *model.ListOptions) ([]*model.Repo, error) {
 	client := c.newClientToken(ctx, u.AccessToken)
 	list, _, err := client.Repositories.ListByAuthenticatedUser(ctx, &github.RepositoryListByAuthenticatedUserOptions{
 		ListOptions: github.ListOptions{
@@ -245,7 +234,7 @@ func (c *client) Repos(ctx context.Context, u *model.User, p *model.ListOptions)
 }
 
 // File fetches the file from the GitHub repository and returns its contents.
-func (c *client) File(ctx context.Context, u *model.User, r *model.Repo, b *model.Pipeline, f string) ([]byte, error) {
+func (c *client) File(ctx context.Context, u *model.Account, r *model.Repo, b *model.Pipeline, f string) ([]byte, error) {
 	client := c.newClientToken(ctx, u.AccessToken)
 
 	opts := new(github.RepositoryContentGetOptions)
@@ -264,7 +253,7 @@ func (c *client) File(ctx context.Context, u *model.User, r *model.Repo, b *mode
 	return []byte(data), err
 }
 
-func (c *client) Dir(ctx context.Context, u *model.User, r *model.Repo, b *model.Pipeline, f string) ([]*forge_types.FileMeta, error) {
+func (c *client) Dir(ctx context.Context, u *model.Account, r *model.Repo, b *model.Pipeline, f string) ([]*forge_types.FileMeta, error) {
 	client := c.newClientToken(ctx, u.AccessToken)
 
 	opts := new(github.RepositoryContentGetOptions)
@@ -314,7 +303,7 @@ func (c *client) Dir(ctx context.Context, u *model.User, r *model.Repo, b *model
 	return files, nil
 }
 
-func (c *client) PullRequests(ctx context.Context, u *model.User, r *model.Repo, p *model.ListOptions) ([]*model.PullRequest, error) {
+func (c *client) PullRequests(ctx context.Context, u *model.Account, r *model.Repo, p *model.ListOptions) ([]*model.PullRequest, error) {
 	token := common.UserToken(ctx, r, u)
 	client := c.newClientToken(ctx, token)
 
@@ -342,7 +331,7 @@ func (c *client) PullRequests(ctx context.Context, u *model.User, r *model.Repo,
 // Netrc returns a netrc file capable of authenticating GitHub requests and
 // cloning GitHub repositories. The netrc will use the global machine account
 // when configured.
-func (c *client) Netrc(u *model.User, r *model.Repo) (*model.Netrc, error) {
+func (c *client) Netrc(u *model.Account, r *model.Repo) (*model.Netrc, error) {
 	login := ""
 	token := ""
 
@@ -366,7 +355,7 @@ func (c *client) Netrc(u *model.User, r *model.Repo) (*model.Netrc, error) {
 
 // Deactivate deactivates the repository be removing registered push hooks from
 // the GitHub repository.
-func (c *client) Deactivate(ctx context.Context, u *model.User, r *model.Repo, link string) error {
+func (c *client) Deactivate(ctx context.Context, u *model.Account, r *model.Repo, link string) error {
 	client := c.newClientToken(ctx, u.AccessToken)
 	hooks, _, err := client.Repositories.ListHooks(ctx, r.Owner, r.Name, nil)
 	if err != nil {
@@ -382,9 +371,9 @@ func (c *client) Deactivate(ctx context.Context, u *model.User, r *model.Repo, l
 
 // OrgMembership returns if user is member of organization and if user
 // is admin/owner in this organization.
-func (c *client) OrgMembership(ctx context.Context, u *model.User, owner string) (*model.OrgPerm, error) {
+func (c *client) OrgMembership(ctx context.Context, u *model.Account, owner string) (*model.OrgPerm, error) {
 	client := c.newClientToken(ctx, u.AccessToken)
-	org, _, err := client.Organizations.GetOrgMembership(ctx, u.Login, owner)
+	org, _, err := client.Organizations.GetOrgMembership(ctx, u.AccountName, owner)
 	if err != nil {
 		return nil, err
 	}
@@ -392,7 +381,7 @@ func (c *client) OrgMembership(ctx context.Context, u *model.User, owner string)
 	return &model.OrgPerm{Member: org.GetState() == "active", Admin: org.GetRole() == "admin"}, nil
 }
 
-func (c *client) Org(ctx context.Context, u *model.User, owner string) (*model.Org, error) {
+func (c *client) Org(ctx context.Context, u *model.Account, owner string) (*model.Org, error) {
 	client := c.newClientToken(ctx, u.AccessToken)
 
 	org, _, err := client.Organizations.Get(ctx, owner)
@@ -531,7 +520,7 @@ var reDeploy = regexp.MustCompile(`.+/deployments/(\d+)`)
 
 // Status sends the commit status to the forge.
 // An example would be the GitHub pull request status.
-func (c *client) Status(ctx context.Context, user *model.User, repo *model.Repo, pipeline *model.Pipeline, workflow *model.Workflow) error {
+func (c *client) Status(ctx context.Context, user *model.Account, repo *model.Repo, pipeline *model.Pipeline, workflow *model.Workflow) error {
 	client := c.newClientToken(ctx, user.AccessToken)
 
 	if pipeline.Event == model.EventDeploy {
@@ -562,7 +551,7 @@ func (c *client) Status(ctx context.Context, user *model.User, repo *model.Repo,
 
 // Activate activates a repository by creating the post-commit hook and
 // adding the SSH deploy key, if applicable.
-func (c *client) Activate(ctx context.Context, u *model.User, r *model.Repo, link string) error {
+func (c *client) Activate(ctx context.Context, u *model.Account, r *model.Repo, link string) error {
 	if err := c.Deactivate(ctx, u, r, link); err != nil {
 		return err
 	}
@@ -585,7 +574,7 @@ func (c *client) Activate(ctx context.Context, u *model.User, r *model.Repo, lin
 }
 
 // Branches returns the names of all branches for the named repository.
-func (c *client) Branches(ctx context.Context, u *model.User, r *model.Repo, p *model.ListOptions) ([]string, error) {
+func (c *client) Branches(ctx context.Context, u *model.Account, r *model.Repo, p *model.ListOptions) ([]string, error) {
 	token := common.UserToken(ctx, r, u)
 	client := c.newClientToken(ctx, token)
 
@@ -607,7 +596,7 @@ func (c *client) Branches(ctx context.Context, u *model.User, r *model.Repo, p *
 }
 
 // BranchHead returns the sha of the head (latest commit) of the specified branch.
-func (c *client) BranchHead(ctx context.Context, u *model.User, r *model.Repo, branch string) (*model.Commit, error) {
+func (c *client) BranchHead(ctx context.Context, u *model.Account, r *model.Repo, branch string) (*model.Commit, error) {
 	token := common.UserToken(ctx, r, u)
 	b, _, err := c.newClientToken(ctx, token).Repositories.GetBranch(ctx, r.Owner, r.Name, branch, 1)
 	if err != nil {
@@ -659,12 +648,12 @@ func (c *client) loadChangedFilesFromPullRequest(ctx context.Context, pull *gith
 		return pipeline, nil
 	}
 
-	repo, err := _store.GetRepoNameFallback(tmpRepo.ForgeRemoteID, tmpRepo.FullName)
+	repo, err := _store.GetRepoNameFallback(tmpRepo.ForgeRemoteID, tmpRepo.FullName, false)
 	if err != nil {
 		return nil, err
 	}
 
-	user, err := _store.GetUser(repo.UserID)
+	user, err := _store.GetUser(repo.ForgeAccountID, false)
 	if err != nil {
 		return nil, err
 	}
@@ -697,12 +686,12 @@ func (c *client) getTagCommitSHA(ctx context.Context, repo *model.Repo, tagName 
 		return "", nil
 	}
 
-	repo, err := _store.GetRepoNameFallback(repo.ForgeRemoteID, repo.FullName)
+	repo, err := _store.GetRepoNameFallback(repo.ForgeRemoteID, repo.FullName, false)
 	if err != nil {
 		return "", err
 	}
 
-	user, err := _store.GetUser(repo.UserID)
+	user, err := _store.GetUser(repo.ForgeAccountID, false)
 	if err != nil {
 		return "", err
 	}
@@ -752,12 +741,12 @@ func (c *client) loadChangedFilesFromCommits(ctx context.Context, tmpRepo *model
 		log.Trace().Msg("GitHub tag event, fetching changed files using current commit")
 	}
 
-	repo, err := _store.GetRepoNameFallback(tmpRepo.ForgeRemoteID, tmpRepo.FullName)
+	repo, err := _store.GetRepoNameFallback(tmpRepo.ForgeRemoteID, tmpRepo.FullName, false)
 	if err != nil {
 		return nil, err
 	}
 
-	user, err := _store.GetUser(repo.UserID)
+	user, err := _store.GetUser(repo.ForgeAccountID, false)
 	if err != nil {
 		return nil, err
 	}

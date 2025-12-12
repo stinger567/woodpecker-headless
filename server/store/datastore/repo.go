@@ -26,37 +26,37 @@ import (
 	"go.woodpecker-ci.org/woodpecker/v3/server/store/types"
 )
 
-func (s storage) GetRepo(id int64) (*model.Repo, error) {
+func (s storage) GetRepo(id string, internal bool) (*model.Repo, error) {
 	repo := new(model.Repo)
 	return repo, wrapGet(s.engine.ID(id).Get(repo))
 }
 
-func (s storage) GetRepoForgeID(remoteID model.ForgeRemoteID) (*model.Repo, error) {
+func (s storage) GetRepoForgeID(remoteID model.ForgeRemoteID, internal bool) (*model.Repo, error) {
 	sess := s.engine.NewSession()
 	defer sess.Close()
-	return s.getRepoForgeID(sess, remoteID)
+	return s.getRepoForgeID(sess, remoteID, internal)
 }
 
-func (s storage) getRepoForgeID(e *xorm.Session, remoteID model.ForgeRemoteID) (*model.Repo, error) {
+func (s storage) getRepoForgeID(e *xorm.Session, remoteID model.ForgeRemoteID, internal bool) (*model.Repo, error) {
 	repo := new(model.Repo)
 	return repo, wrapGet(e.Where("forge_remote_id = ?", remoteID).Get(repo))
 }
 
-func (s storage) GetRepoNameFallback(remoteID model.ForgeRemoteID, fullName string) (*model.Repo, error) {
+func (s storage) GetRepoNameFallback(remoteID model.ForgeRemoteID, fullName string, internal bool) (*model.Repo, error) {
 	sess := s.engine.NewSession()
 	defer sess.Close()
-	return s.getRepoNameFallback(sess, remoteID, fullName)
+	return s.getRepoNameFallback(sess, remoteID, fullName, internal)
 }
 
-func (s storage) getRepoNameFallback(e *xorm.Session, remoteID model.ForgeRemoteID, fullName string) (*model.Repo, error) {
-	repo, err := s.getRepoForgeID(e, remoteID)
+func (s storage) getRepoNameFallback(e *xorm.Session, remoteID model.ForgeRemoteID, fullName string, internal bool) (*model.Repo, error) {
+	repo, err := s.getRepoForgeID(e, remoteID, internal)
 	if errors.Is(err, types.RecordNotExist) {
 		return s.getRepoName(e, fullName)
 	}
 	return repo, err
 }
 
-func (s storage) GetRepoName(fullName string) (*model.Repo, error) {
+func (s storage) GetRepoName(fullName string, internal bool) (*model.Repo, error) {
 	sess := s.engine.NewSession()
 	defer sess.Close()
 	repo, err := s.getRepoName(sess, fullName)
@@ -66,7 +66,7 @@ func (s storage) GetRepoName(fullName string) (*model.Repo, error) {
 		if err != nil {
 			return nil, err
 		}
-		return s.GetRepo(redirect.RepoID)
+		return s.GetRepo(redirect.RepoID, internal)
 	}
 	return repo, err
 }
@@ -143,7 +143,7 @@ func (s storage) deleteRepo(sess *xorm.Session, repo *model.Repo) error {
 
 // RepoList list all repos where permissions for specific user are stored
 // TODO: paginate
-func (s storage) RepoList(user *model.User, owned, active bool, f *model.RepoFilter) ([]*model.Repo, error) {
+func (s storage) RepoList(user *model.Account, owned, active bool, f *model.RepoFilter) ([]*model.Repo, error) {
 	repos := make([]*model.Repo, 0)
 	sess := s.engine.Table("repos").
 		Join("INNER", "perms", "perms.repo_id = repos.id").

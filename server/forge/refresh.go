@@ -35,10 +35,10 @@ type Refresher interface {
 	// Should update u.AccessToken, u.RefreshToken, and u.Expiry.
 	// Returns true if any fields were updated.
 	// Caller must persist updated user to database.
-	Refresh(ctx context.Context, u *model.User) (bool, error)
+	Refresh(ctx context.Context, u *model.Account) (bool, error)
 }
 
-func Refresh(c context.Context, forge Forge, _store store.Store, user *model.User) {
+func Refresh(c context.Context, forge Forge, _store store.Store, user *model.Account) {
 	// Remaining ttl of 30 minutes (1800 seconds) until a token is refreshed.
 	const tokenMinTTL = 1800
 
@@ -52,7 +52,7 @@ func Refresh(c context.Context, forge Forge, _store store.Store, user *model.Use
 
 		ok, err := refresher.Refresh(c, user)
 		if err != nil {
-			log.Error().Err(err).Msgf("refresh oauth token of user '%s' failed", user.Login)
+			log.Error().Err(err).Msgf("refresh oauth token of user '%s' failed", user.AccountName)
 		} else if ok {
 			if err := _store.UpdateUser(user); err != nil {
 				log.Error().Err(err).Msg("fail to save user to store after refresh oauth token")

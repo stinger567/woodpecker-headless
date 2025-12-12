@@ -45,8 +45,8 @@ type Manager interface {
 	ConfigServiceFromRepo(repo *model.Repo) config.Service
 	EnvironmentService() environment.Service
 	ForgeFromRepo(repo *model.Repo) (forge.Forge, error)
-	ForgeFromUser(user *model.User) (forge.Forge, error)
-	ForgeByID(forgeID int64) (forge.Forge, error)
+	ForgeFromUser(user *model.Account) (forge.Forge, error)
+	ForgeByID(forgeID string, internal bool) (forge.Forge, error)
 }
 
 type manager struct {
@@ -57,18 +57,13 @@ type manager struct {
 	registry            registry.Service
 	config              config.Service
 	environment         environment.Service
-	forgeCache          *ttlcache.Cache[int64, forge.Forge]
+	forgeCache          *ttlcache.Cache[string, forge.Forge]
 	setupForge          SetupForge
 	client              *utils.Client
 }
 
 func NewManager(c *cli.Command, store store.Store, setupForge SetupForge) (Manager, error) {
 	signaturePrivateKey, signaturePublicKey, err := setupSignatureKeys(store)
-	if err != nil {
-		return nil, err
-	}
-
-	err = setupForgeService(c, store)
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +86,7 @@ func NewManager(c *cli.Command, store store.Store, setupForge SetupForge) (Manag
 		registry:            setupRegistryService(store, c.String("docker-config")),
 		config:              configService,
 		environment:         environment.Parse(c.StringSlice("environment")),
-		forgeCache:          ttlcache.New(ttlcache.WithDisableTouchOnHit[int64, forge.Forge]()),
+		forgeCache:          ttlcache.New(ttlcache.WithDisableTouchOnHit[string, forge.Forge]()),
 		setupForge:          setupForge,
 		client:              client,
 	}, nil
@@ -130,20 +125,20 @@ func (m *manager) EnvironmentService() environment.Service {
 }
 
 func (m *manager) ForgeFromRepo(repo *model.Repo) (forge.Forge, error) {
-	return m.ForgeByID(repo.ForgeID)
+	return m.ForgeByID(repo.ForgeID, repo.Internal)
 }
 
-func (m *manager) ForgeFromUser(user *model.User) (forge.Forge, error) {
-	return m.ForgeByID(user.ForgeID)
+func (m *manager) ForgeFromUser(user *model.Account) (forge.Forge, error) {
+	return m.ForgeByID(user.ForgeID, user.Internal)
 }
 
-func (m *manager) ForgeByID(id int64) (forge.Forge, error) {
+func (m *manager) ForgeByID(id string, internal bool) (forge.Forge, error) {
 	item := m.forgeCache.Get(id)
 	if item != nil && !item.IsExpired() {
 		return item.Value(), nil
 	}
 
-	forgeModel, err := m.store.ForgeGet(id)
+	forgeModel, err := m.store.ForgeGet(id, internal)
 	if err != nil {
 		return nil, err
 	}

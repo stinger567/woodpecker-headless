@@ -35,7 +35,7 @@ func (s storage) ConfigsForPipeline(pipelineID int64) ([]*model.Config, error) {
 		Find(&configs)
 }
 
-func (s storage) configFindIdentical(sess *xorm.Session, repoID int64, hash, name string) (*model.Config, error) {
+func (s storage) configFindIdentical(sess *xorm.Session, repoID string, hash, name string) (*model.Config, error) {
 	conf := new(model.Config)
 	if err := wrapGet(sess.Where(
 		builder.Eq{"repo_id": repoID, "hash": hash, "name": name},

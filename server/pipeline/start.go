@@ -26,7 +26,7 @@ import (
 )
 
 // start a pipeline, make sure it was stored persistent in the store before.
-func start(ctx context.Context, forge forge.Forge, store store.Store, activePipeline *model.Pipeline, user *model.User, repo *model.Repo, pipelineItems []*stepbuilder.Item) (*model.Pipeline, error) {
+func start(ctx context.Context, forge forge.Forge, store store.Store, activePipeline *model.Pipeline, user *model.Account, repo *model.Repo, pipelineItems []*stepbuilder.Item) (*model.Pipeline, error) {
 	// call to cancel previous pipelines if needed
 	if err := cancelPreviousPipelines(ctx, forge, store, activePipeline, repo, user); err != nil {
 		// should be not breaking
@@ -43,7 +43,7 @@ func start(ctx context.Context, forge forge.Forge, store store.Store, activePipe
 	return activePipeline, nil
 }
 
-func prepareStart(ctx context.Context, forge forge.Forge, store store.Store, activePipeline *model.Pipeline, user *model.User, repo *model.Repo) error {
+func prepareStart(ctx context.Context, forge forge.Forge, store store.Store, activePipeline *model.Pipeline, user *model.Account, repo *model.Repo) error {
 	if err := store.WorkflowsCreate(activePipeline.Workflows); err != nil {
 		log.Error().Err(err).Str("repo", repo.FullName).Msgf("error persisting steps for %s#%d", repo.FullName, activePipeline.Number)
 		return err
@@ -53,7 +53,7 @@ func prepareStart(ctx context.Context, forge forge.Forge, store store.Store, act
 	return nil
 }
 
-func publishPipeline(ctx context.Context, forge forge.Forge, pipeline *model.Pipeline, repo *model.Repo, repoUser *model.User) {
+func publishPipeline(ctx context.Context, forge forge.Forge, pipeline *model.Pipeline, repo *model.Repo, repoUser *model.Account) {
 	publishToTopic(pipeline, repo)
 	updatePipelineStatus(ctx, forge, pipeline, repo, repoUser)
 }

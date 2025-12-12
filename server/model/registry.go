@@ -29,8 +29,8 @@ var (
 // Registry represents a docker registry with credentials.
 type Registry struct {
 	ID       int64  `json:"id"       xorm:"pk autoincr 'id'"`
-	OrgID    int64  `json:"org_id"   xorm:"NOT NULL DEFAULT 0 UNIQUE(s) INDEX 'org_id'"`
-	RepoID   int64  `json:"repo_id"  xorm:"NOT NULL DEFAULT 0 UNIQUE(s) INDEX 'repo_id'"`
+	OrgID    string `json:"org_id"   xorm:"NOT NULL DEFAULT 0 UNIQUE(s) INDEX 'org_id'"`
+	RepoID   string `json:"repo_id"  xorm:"NOT NULL DEFAULT 0 UNIQUE(s) INDEX 'repo_id'"`
 	Address  string `json:"address"  xorm:"NOT NULL UNIQUE(s) INDEX 'address'"`
 	Username string `json:"username" xorm:"varchar(2000) 'username'"`
 	Password string `json:"password" xorm:"TEXT 'password'"`
@@ -43,17 +43,17 @@ func (r Registry) TableName() string {
 
 // Global registry.
 func (r Registry) IsGlobal() bool {
-	return r.RepoID == 0 && r.OrgID == 0
+	return r.RepoID == "" && r.OrgID == ""
 }
 
 // Organization registry.
 func (r Registry) IsOrganization() bool {
-	return r.RepoID == 0 && r.OrgID != 0
+	return r.RepoID == "" && r.OrgID != ""
 }
 
 // Repository registry.
 func (r Registry) IsRepository() bool {
-	return r.RepoID != 0 && r.OrgID == 0
+	return r.RepoID != "" && r.OrgID == ""
 }
 
 // Validate validates the registry information.

@@ -83,21 +83,19 @@ func CreatePipeline(c *gin.Context) {
 	}
 }
 
-func createTmpPipeline(event model.WebhookEvent, commit *model.Commit, user *model.User, opts *model.PipelineOptions) *model.Pipeline {
+func createTmpPipeline(event model.WebhookEvent, commit *model.Commit, user *model.Account, opts *model.PipelineOptions) *model.Pipeline {
 	return &model.Pipeline{
 		Event:     event,
 		Commit:    commit.SHA,
 		Branch:    opts.Branch,
 		Timestamp: time.Now().UTC().Unix(),
 
-		Avatar:  user.Avatar,
 		Message: "MANUAL PIPELINE @ " + opts.Branch,
 
 		Ref:                 opts.Branch,
 		AdditionalVariables: opts.Variables,
 
-		Author: user.Login,
-		Email:  user.Email,
+		Author: user.AccountName,
 
 		ForgeURL: commit.ForgeURL,
 	}
@@ -604,7 +602,7 @@ func PostPipeline(c *gin.Context) {
 		return
 	}
 
-	user, err := _store.GetUser(repo.UserID)
+	user, err := _store.GetUser(repo.ForgeAccountID, repo.Internal)
 	if err != nil {
 		handleDBError(c, err)
 		return

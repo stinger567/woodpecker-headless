@@ -147,12 +147,10 @@ func authorLabel(name string) string {
 	return result
 }
 
-func convertUser(user *bb.User, baseURL string) *model.User {
-	return &model.User{
+func convertUser(user *bb.User, baseURL string) *model.Account {
+	return &model.Account{
 		ForgeRemoteID: model.ForgeRemoteID(fmt.Sprintf("%d", user.ID)),
-		Login:         user.Slug,
-		Email:         user.Email,
-		Avatar:        bitbucketAvatarURL(baseURL, user.Slug),
+		AccountName:   user.Slug,
 	}
 }
 
@@ -167,7 +165,7 @@ func convertListOptions(p *model.ListOptions) bb.ListOptions {
 	return bb.ListOptions{Limit: uint(p.PerPage), Start: uint((p.Page - 1) * p.PerPage)}
 }
 
-func updateUserCredentials(u *model.User, t *oauth2.Token) {
+func updateUserCredentials(u *model.Account, t *oauth2.Token) {
 	u.AccessToken = t.AccessToken
 	u.RefreshToken = t.RefreshToken
 	u.Expiry = t.Expiry.UTC().Unix()

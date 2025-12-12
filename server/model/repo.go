@@ -43,12 +43,13 @@ func (mode ApprovalMode) Valid() bool {
 
 // Repo represents a repository.
 type Repo struct {
-	ID      int64 `json:"id,omitempty"                    xorm:"pk autoincr 'id'"`
-	UserID  int64 `json:"-"                               xorm:"INDEX 'user_id'"`
-	ForgeID int64 `json:"forge_id,omitempty"              xorm:"UNIQUE(forge) forge_id"`
+	ID             string `json:"id,omitempty"                    xorm:"pk autoincr 'id'"`
+	ForgeAccountID string `json:"-"                               xorm:"INDEX 'user_id'"`
+	ForgeName      string
+	ForgeID        string `json:"forge_id,omitempty"              xorm:"UNIQUE(forge) forge_id"`
 	// ForgeRemoteID is the unique identifier for the repository on the forge.
 	ForgeRemoteID                ForgeRemoteID        `json:"forge_remote_id"                 xorm:"UNIQUE(forge) forge_remote_id"`
-	OrgID                        int64                `json:"org_id"                          xorm:"INDEX 'org_id'"`
+	OrgID                        string               `json:"org_id"                          xorm:"INDEX 'org_id'"`
 	Owner                        string               `json:"owner"                           xorm:"UNIQUE(name) 'owner'"`
 	Name                         string               `json:"name"                            xorm:"UNIQUE(name) 'name'"`
 	FullName                     string               `json:"full_name"                       xorm:"UNIQUE 'full_name'"`
@@ -73,6 +74,8 @@ type Repo struct {
 	CancelPreviousPipelineEvents []WebhookEvent       `json:"cancel_previous_pipeline_events" xorm:"json 'cancel_previous_pipeline_events'"`
 	NetrcTrustedPlugins          []string             `json:"netrc_trusted"                   xorm:"json 'netrc_trusted'"`
 	ConfigExtensionEndpoint      string               `json:"config_extension_endpoint"       xorm:"varchar(500) 'config_extension_endpoint'"`
+
+	Internal bool
 } //	@name	Repo
 
 // TableName return database table name for xorm.

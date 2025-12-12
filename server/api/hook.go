@@ -207,10 +207,14 @@ func PostHook(c *gin.Context) {
 	//
 
 	var repo *model.Repo
-
-	_, err := token.ParseRequest([]token.Type{token.HookToken}, c.Request, func(t *token.Token) (string, error) {
+	internal, err := strconv.ParseBool(c.Param("internal"))
+	if err != nil {
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+	_, err = token.ParseRequest([]token.Type{token.HookToken}, c.Request, func(t *token.Token) (string, error) {
 		var err error
-		repo, err = getRepoFromToken(_store, t)
+		repo, err = getRepoFromToken(_store, t, internal)
 		if err != nil {
 			return "", err
 		}
@@ -233,7 +237,7 @@ func PostHook(c *gin.Context) {
 
 	_forge, err := server.Config.Services.Manager.ForgeFromRepo(repo)
 	if err != nil {
-		log.Error().Err(err).Int64("repo-id", repo.ID).Msgf("Cannot get forge with id: %d", repo.ForgeID)
+		log.Error().Err(err).Str("repo-id", repo.ID).Msgf("Cannot get forge with id: %d", repo.ForgeID)
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
@@ -290,13 +294,13 @@ func PostHook(c *gin.Context) {
 		return
 	}
 
-	if repo.UserID == 0 {
+	if repo.ForgeAccountID == "" {
 		log.Warn().Msgf("ignoring hook. repo %s has no owner.", repo.FullName)
 		c.Status(http.StatusNoContent)
 		return
 	}
 
-	user, err := _store.GetUser(repo.UserID)
+	user, err := _store.GetUser(repo.ForgeAccountID, repo.Internal)
 	if err != nil {
 		handleDBError(c, err)
 		return
@@ -345,7 +349,7 @@ func PostHook(c *gin.Context) {
 	}
 }
 
-func getRepoFromToken(store store.Store, t *token.Token) (*model.Repo, error) {
+func getRepoFromToken(store store.Store, t *token.Token, internal bool) (*model.Repo, error) {
 	if t.Get("repo-forge-remote-id") != "" {
 		// TODO: use both the forge ID and repo forge remote ID
 		/*forgeID, err := strconv.ParseInt(t.Get("forge-id"), 10, 64)
@@ -353,14 +357,12 @@ func getRepoFromToken(store store.Store, t *token.Token) (*model.Repo, error) {
 			return nil, err
 		}*/
 
-		return store.GetRepoForgeID(model.ForgeRemoteID(t.Get("repo-forge-remote-id")))
+		return store.GetRepoForgeID(model.ForgeRemoteID(t.Get("repo-forge-remote-id")), internal)
 	}
 
 	// get the repo by the repo-id
 	// TODO: remove in next major
-	repoID, err := strconv.ParseInt(t.Get("repo-id"), 10, 64)
-	if err != nil {
-		return nil, err
-	}
-	return store.GetRepo(repoID)
+	repoID := t.Get("repo-id")
+
+	return store.GetRepo(repoID, internal)
 }

@@ -59,14 +59,14 @@ func (s storage) RegistryDelete(registry *model.Registry) error {
 	return wrapDelete(s.engine.ID(registry.ID).Delete(new(model.Registry)))
 }
 
-func (s storage) OrgRegistryFind(orgID int64, name string) (*model.Registry, error) {
+func (s storage) OrgRegistryFind(orgID string, name string) (*model.Registry, error) {
 	registry := new(model.Registry)
 	return registry, wrapGet(s.engine.Where(
 		builder.Eq{"org_id": orgID, "address": name},
 	).Get(registry))
 }
 
-func (s storage) OrgRegistryList(orgID int64, p *model.ListOptions) ([]*model.Registry, error) {
+func (s storage) OrgRegistryList(orgID string, p *model.ListOptions) ([]*model.Registry, error) {
 	registries := make([]*model.Registry, 0)
 	return registries, s.paginate(p).Where("org_id = ?", orgID).OrderBy(orderRegistriesBy).Find(&registries)
 }

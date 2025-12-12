@@ -47,16 +47,22 @@ func GetBadge(c *gin.Context) {
 	var repo *model.Repo
 	var err error
 
+	internal, err := strconv.ParseBool(c.Param("internal"))
+	if err != nil {
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
 	if c.Param("repo_name") != "" {
-		repo, err = _store.GetRepoName(c.Param("repo_id_or_owner") + "/" + c.Param("repo_name"))
+		repo, err = _store.GetRepoName(c.Param("repo_id_or_owner")+"/"+c.Param("repo_name"), internal)
 	} else {
-		var repoID int64
-		repoID, err = strconv.ParseInt(c.Param("repo_id_or_owner"), 10, 64)
-		if err != nil {
+		var repoID string
+		repoID = c.Param("repo_id_or_owner")
+		if repoID == "" {
 			c.AbortWithStatus(http.StatusBadRequest)
 			return
 		}
-		repo, err = _store.GetRepo(repoID)
+		repo, err = _store.GetRepo(repoID, internal)
 	}
 
 	if err != nil {
@@ -101,16 +107,22 @@ func GetCC(c *gin.Context) {
 	var repo *model.Repo
 	var err error
 
+	internal, err := strconv.ParseBool(c.Param("internal"))
+	if err != nil {
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
 	if c.Param("repo_name") != "" {
-		repo, err = _store.GetRepoName(c.Param("repo_id_or_owner") + "/" + c.Param("repo_name"))
+		repo, err = _store.GetRepoName(c.Param("repo_id_or_owner")+"/"+c.Param("repo_name"), internal)
 	} else {
-		var repoID int64
-		repoID, err = strconv.ParseInt(c.Param("repo_id_or_owner"), 10, 64)
-		if err != nil {
+		var repoID string
+		repoID = c.Param("repo_id_or_owner")
+		if repoID == "" {
 			c.AbortWithStatus(http.StatusBadRequest)
 			return
 		}
-		repo, err = _store.GetRepo(repoID)
+		repo, err = _store.GetRepo(repoID, internal)
 	}
 
 	if err != nil {

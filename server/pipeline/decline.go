@@ -27,7 +27,7 @@ import (
 )
 
 // Decline updates the status to declined for blocked pipelines.
-func Decline(ctx context.Context, store store.Store, pipeline *model.Pipeline, user *model.User, repo *model.Repo) (*model.Pipeline, error) {
+func Decline(ctx context.Context, store store.Store, pipeline *model.Pipeline, user *model.Account, repo *model.Repo) (*model.Pipeline, error) {
 	forge, err := server.Config.Services.Manager.ForgeFromRepo(repo)
 	if err != nil {
 		msg := fmt.Sprintf("failure to load forge for repo '%s'", repo.FullName)
@@ -39,7 +39,7 @@ func Decline(ctx context.Context, store store.Store, pipeline *model.Pipeline, u
 		return nil, fmt.Errorf("cannot decline a pipeline with status %s", pipeline.Status)
 	}
 
-	pipeline, err = UpdateToStatusDeclined(store, *pipeline, user.Login)
+	pipeline, err = UpdateToStatusDeclined(store, *pipeline, user.AccountName)
 	if err != nil {
 		return nil, fmt.Errorf("error updating pipeline. %w", err)
 	}

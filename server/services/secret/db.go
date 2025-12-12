@@ -85,23 +85,23 @@ func (d *db) SecretDelete(repo *model.Repo, name string) error {
 	return d.store.SecretDelete(secret)
 }
 
-func (d *db) OrgSecretFind(owner int64, name string) (*model.Secret, error) {
+func (d *db) OrgSecretFind(owner string, name string) (*model.Secret, error) {
 	return d.store.OrgSecretFind(owner, name)
 }
 
-func (d *db) OrgSecretList(owner int64, p *model.ListOptions) ([]*model.Secret, error) {
+func (d *db) OrgSecretList(owner string, p *model.ListOptions) ([]*model.Secret, error) {
 	return d.store.OrgSecretList(owner, p)
 }
 
-func (d *db) OrgSecretCreate(_ int64, in *model.Secret) error {
+func (d *db) OrgSecretCreate(_ string, in *model.Secret) error {
 	return d.store.SecretCreate(in)
 }
 
-func (d *db) OrgSecretUpdate(_ int64, in *model.Secret) error {
+func (d *db) OrgSecretUpdate(_ string, in *model.Secret) error {
 	return d.store.SecretUpdate(in)
 }
 
-func (d *db) OrgSecretDelete(owner int64, name string) error {
+func (d *db) OrgSecretDelete(owner string, name string) error {
 	secret, err := d.store.OrgSecretFind(owner, name)
 	if err != nil {
 		return err

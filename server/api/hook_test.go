@@ -40,17 +40,17 @@ func TestHook(t *testing.T) {
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
 	c.Set("store", _store)
-	user := &model.User{
+	user := &model.Account{
 		ID: 123,
 	}
 	repo := &model.Repo{
-		ID:            123,
-		ForgeRemoteID: "123",
-		Owner:         "owner",
-		Name:          "name",
-		IsActive:      true,
-		UserID:        user.ID,
-		Hash:          "secret-123-this-is-a-secret",
+		ID:             123,
+		ForgeRemoteID:  "123",
+		Owner:          "owner",
+		Name:           "name",
+		IsActive:       true,
+		ForgeAccountID: user.ID,
+		Hash:           "secret-123-this-is-a-secret",
 	}
 	pipeline := &model.Pipeline{
 		ID:     123,

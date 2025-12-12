@@ -59,14 +59,14 @@ func (s storage) SecretDelete(secret *model.Secret) error {
 	return wrapDelete(s.engine.ID(secret.ID).Delete(new(model.Secret)))
 }
 
-func (s storage) OrgSecretFind(orgID int64, name string) (*model.Secret, error) {
+func (s storage) OrgSecretFind(orgID string, name string) (*model.Secret, error) {
 	secret := new(model.Secret)
 	return secret, wrapGet(s.engine.Where(
 		builder.Eq{"org_id": orgID, "name": name},
 	).Get(secret))
 }
 
-func (s storage) OrgSecretList(orgID int64, p *model.ListOptions) ([]*model.Secret, error) {
+func (s storage) OrgSecretList(orgID string, p *model.ListOptions) ([]*model.Secret, error) {
 	secrets := make([]*model.Secret, 0)
 	return secrets, s.paginate(p).Where("org_id = ?", orgID).OrderBy(orderSecretsBy).Find(&secrets)
 }

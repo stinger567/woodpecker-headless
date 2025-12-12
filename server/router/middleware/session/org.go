@@ -17,7 +17,6 @@ package session
 import (
 	"errors"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 
@@ -41,13 +40,13 @@ func Org(c *gin.Context) *model.Org {
 func SetOrg() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var (
-			orgID int64
+			orgID string
 			err   error
 		)
 
 		orgParam := c.Param("org_id")
 		if orgParam != "" {
-			orgID, err = strconv.ParseInt(orgParam, 10, 64)
+			orgID = orgParam
 			if err != nil {
 				c.String(http.StatusBadRequest, "Invalid organization ID")
 				c.Abort()
@@ -55,7 +54,7 @@ func SetOrg() gin.HandlerFunc {
 			}
 		}
 
-		org, err := store.FromContext(c).OrgGet(orgID)
+		org, err := store.FromContext(c).OrgGet(orgID, IsInternal(c))
 		if err != nil && !errors.Is(err, types.RecordNotExist) {
 			_ = c.AbortWithError(http.StatusInternalServerError, err)
 			return

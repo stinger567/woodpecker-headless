@@ -55,6 +55,6 @@ func (s storage) AgentDelete(agent *model.Agent) error {
 	return wrapDelete(s.engine.ID(agent.ID).Delete(new(model.Agent)))
 }
 
-func (s storage) AgentListForOrg(orgID int64, p *model.ListOptions) (agents []*model.Agent, _ error) {
+func (s storage) AgentListForOrg(orgID string, p *model.ListOptions) (agents []*model.Agent, _ error) {
 	return agents, s.paginate(p).Where("org_id = ?", orgID).OrderBy("id").Find(&agents)
 }

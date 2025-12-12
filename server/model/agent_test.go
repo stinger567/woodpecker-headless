@@ -55,7 +55,7 @@ func TestAgent_GetServerLabels(t *testing.T) {
 
 	t.Run("OrgAgent", func(t *testing.T) {
 		agent := &Agent{
-			OrgID: 123,
+			OrgID: "123",
 		}
 		filters, err := agent.GetServerLabels()
 		assert.NoError(t, err)
@@ -66,8 +66,8 @@ func TestAgent_GetServerLabels(t *testing.T) {
 }
 
 func TestAgent_CanAccessRepo(t *testing.T) {
-	repo := &Repo{ID: 123, OrgID: 12}
-	otherRepo := &Repo{ID: 456, OrgID: 45}
+	repo := &Repo{ID: 123, OrgID: "12"}
+	otherRepo := &Repo{ID: 456, OrgID: "45"}
 
 	t.Run("EmptyAgent", func(t *testing.T) {
 		agent := &Agent{}
@@ -84,7 +84,7 @@ func TestAgent_CanAccessRepo(t *testing.T) {
 
 	t.Run("OrgAgent", func(t *testing.T) {
 		agent := &Agent{
-			OrgID: 12,
+			OrgID: "12",
 		}
 		assert.True(t, agent.CanAccessRepo(repo))
 		assert.False(t, agent.CanAccessRepo(otherRepo))

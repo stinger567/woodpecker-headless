@@ -41,7 +41,7 @@ func (_m *MockForge) EXPECT() *MockForge_Expecter {
 }
 
 // Activate provides a mock function for the type MockForge
-func (_mock *MockForge) Activate(ctx context.Context, u *model.User, r *model.Repo, link string) error {
+func (_mock *MockForge) Activate(ctx context.Context, u *model.Account, r *model.Repo, link string) error {
 	ret := _mock.Called(ctx, u, r, link)
 
 	if len(ret) == 0 {
@@ -49,7 +49,7 @@ func (_mock *MockForge) Activate(ctx context.Context, u *model.User, r *model.Re
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.User, *model.Repo, string) error); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.Account, *model.Repo, string) error); ok {
 		r0 = returnFunc(ctx, u, r, link)
 	} else {
 		r0 = ret.Error(0)
@@ -71,15 +71,15 @@ func (_e *MockForge_Expecter) Activate(ctx interface{}, u interface{}, r interfa
 	return &MockForge_Activate_Call{Call: _e.mock.On("Activate", ctx, u, r, link)}
 }
 
-func (_c *MockForge_Activate_Call) Run(run func(ctx context.Context, u *model.User, r *model.Repo, link string)) *MockForge_Activate_Call {
+func (_c *MockForge_Activate_Call) Run(run func(ctx context.Context, u *model.Account, r *model.Repo, link string)) *MockForge_Activate_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 *model.User
+		var arg1 *model.Account
 		if args[1] != nil {
-			arg1 = args[1].(*model.User)
+			arg1 = args[1].(*model.Account)
 		}
 		var arg2 *model.Repo
 		if args[2] != nil {
@@ -104,7 +104,7 @@ func (_c *MockForge_Activate_Call) Return(err error) *MockForge_Activate_Call {
 	return _c
 }
 
-func (_c *MockForge_Activate_Call) RunAndReturn(run func(ctx context.Context, u *model.User, r *model.Repo, link string) error) *MockForge_Activate_Call {
+func (_c *MockForge_Activate_Call) RunAndReturn(run func(ctx context.Context, u *model.Account, r *model.Repo, link string) error) *MockForge_Activate_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -182,7 +182,7 @@ func (_c *MockForge_Auth_Call) RunAndReturn(run func(ctx context.Context, token 
 }
 
 // BranchHead provides a mock function for the type MockForge
-func (_mock *MockForge) BranchHead(ctx context.Context, u *model.User, r *model.Repo, branch string) (*model.Commit, error) {
+func (_mock *MockForge) BranchHead(ctx context.Context, u *model.Account, r *model.Repo, branch string) (*model.Commit, error) {
 	ret := _mock.Called(ctx, u, r, branch)
 
 	if len(ret) == 0 {
@@ -191,17 +191,17 @@ func (_mock *MockForge) BranchHead(ctx context.Context, u *model.User, r *model.
 
 	var r0 *model.Commit
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.User, *model.Repo, string) (*model.Commit, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.Account, *model.Repo, string) (*model.Commit, error)); ok {
 		return returnFunc(ctx, u, r, branch)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.User, *model.Repo, string) *model.Commit); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.Account, *model.Repo, string) *model.Commit); ok {
 		r0 = returnFunc(ctx, u, r, branch)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*model.Commit)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, *model.User, *model.Repo, string) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(context.Context, *model.Account, *model.Repo, string) error); ok {
 		r1 = returnFunc(ctx, u, r, branch)
 	} else {
 		r1 = ret.Error(1)
@@ -223,15 +223,15 @@ func (_e *MockForge_Expecter) BranchHead(ctx interface{}, u interface{}, r inter
 	return &MockForge_BranchHead_Call{Call: _e.mock.On("BranchHead", ctx, u, r, branch)}
 }
 
-func (_c *MockForge_BranchHead_Call) Run(run func(ctx context.Context, u *model.User, r *model.Repo, branch string)) *MockForge_BranchHead_Call {
+func (_c *MockForge_BranchHead_Call) Run(run func(ctx context.Context, u *model.Account, r *model.Repo, branch string)) *MockForge_BranchHead_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 *model.User
+		var arg1 *model.Account
 		if args[1] != nil {
-			arg1 = args[1].(*model.User)
+			arg1 = args[1].(*model.Account)
 		}
 		var arg2 *model.Repo
 		if args[2] != nil {
@@ -256,13 +256,13 @@ func (_c *MockForge_BranchHead_Call) Return(commit *model.Commit, err error) *Mo
 	return _c
 }
 
-func (_c *MockForge_BranchHead_Call) RunAndReturn(run func(ctx context.Context, u *model.User, r *model.Repo, branch string) (*model.Commit, error)) *MockForge_BranchHead_Call {
+func (_c *MockForge_BranchHead_Call) RunAndReturn(run func(ctx context.Context, u *model.Account, r *model.Repo, branch string) (*model.Commit, error)) *MockForge_BranchHead_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // Branches provides a mock function for the type MockForge
-func (_mock *MockForge) Branches(ctx context.Context, u *model.User, r *model.Repo, p *model.ListOptions) ([]string, error) {
+func (_mock *MockForge) Branches(ctx context.Context, u *model.Account, r *model.Repo, p *model.ListOptions) ([]string, error) {
 	ret := _mock.Called(ctx, u, r, p)
 
 	if len(ret) == 0 {
@@ -271,17 +271,17 @@ func (_mock *MockForge) Branches(ctx context.Context, u *model.User, r *model.Re
 
 	var r0 []string
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.User, *model.Repo, *model.ListOptions) ([]string, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.Account, *model.Repo, *model.ListOptions) ([]string, error)); ok {
 		return returnFunc(ctx, u, r, p)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.User, *model.Repo, *model.ListOptions) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.Account, *model.Repo, *model.ListOptions) []string); ok {
 		r0 = returnFunc(ctx, u, r, p)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]string)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, *model.User, *model.Repo, *model.ListOptions) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(context.Context, *model.Account, *model.Repo, *model.ListOptions) error); ok {
 		r1 = returnFunc(ctx, u, r, p)
 	} else {
 		r1 = ret.Error(1)
@@ -303,15 +303,15 @@ func (_e *MockForge_Expecter) Branches(ctx interface{}, u interface{}, r interfa
 	return &MockForge_Branches_Call{Call: _e.mock.On("Branches", ctx, u, r, p)}
 }
 
-func (_c *MockForge_Branches_Call) Run(run func(ctx context.Context, u *model.User, r *model.Repo, p *model.ListOptions)) *MockForge_Branches_Call {
+func (_c *MockForge_Branches_Call) Run(run func(ctx context.Context, u *model.Account, r *model.Repo, p *model.ListOptions)) *MockForge_Branches_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 *model.User
+		var arg1 *model.Account
 		if args[1] != nil {
-			arg1 = args[1].(*model.User)
+			arg1 = args[1].(*model.Account)
 		}
 		var arg2 *model.Repo
 		if args[2] != nil {
@@ -336,13 +336,13 @@ func (_c *MockForge_Branches_Call) Return(strings []string, err error) *MockForg
 	return _c
 }
 
-func (_c *MockForge_Branches_Call) RunAndReturn(run func(ctx context.Context, u *model.User, r *model.Repo, p *model.ListOptions) ([]string, error)) *MockForge_Branches_Call {
+func (_c *MockForge_Branches_Call) RunAndReturn(run func(ctx context.Context, u *model.Account, r *model.Repo, p *model.ListOptions) ([]string, error)) *MockForge_Branches_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // Deactivate provides a mock function for the type MockForge
-func (_mock *MockForge) Deactivate(ctx context.Context, u *model.User, r *model.Repo, link string) error {
+func (_mock *MockForge) Deactivate(ctx context.Context, u *model.Account, r *model.Repo, link string) error {
 	ret := _mock.Called(ctx, u, r, link)
 
 	if len(ret) == 0 {
@@ -350,7 +350,7 @@ func (_mock *MockForge) Deactivate(ctx context.Context, u *model.User, r *model.
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.User, *model.Repo, string) error); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.Account, *model.Repo, string) error); ok {
 		r0 = returnFunc(ctx, u, r, link)
 	} else {
 		r0 = ret.Error(0)
@@ -372,15 +372,15 @@ func (_e *MockForge_Expecter) Deactivate(ctx interface{}, u interface{}, r inter
 	return &MockForge_Deactivate_Call{Call: _e.mock.On("Deactivate", ctx, u, r, link)}
 }
 
-func (_c *MockForge_Deactivate_Call) Run(run func(ctx context.Context, u *model.User, r *model.Repo, link string)) *MockForge_Deactivate_Call {
+func (_c *MockForge_Deactivate_Call) Run(run func(ctx context.Context, u *model.Account, r *model.Repo, link string)) *MockForge_Deactivate_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 *model.User
+		var arg1 *model.Account
 		if args[1] != nil {
-			arg1 = args[1].(*model.User)
+			arg1 = args[1].(*model.Account)
 		}
 		var arg2 *model.Repo
 		if args[2] != nil {
@@ -405,13 +405,13 @@ func (_c *MockForge_Deactivate_Call) Return(err error) *MockForge_Deactivate_Cal
 	return _c
 }
 
-func (_c *MockForge_Deactivate_Call) RunAndReturn(run func(ctx context.Context, u *model.User, r *model.Repo, link string) error) *MockForge_Deactivate_Call {
+func (_c *MockForge_Deactivate_Call) RunAndReturn(run func(ctx context.Context, u *model.Account, r *model.Repo, link string) error) *MockForge_Deactivate_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // Dir provides a mock function for the type MockForge
-func (_mock *MockForge) Dir(ctx context.Context, u *model.User, r *model.Repo, b *model.Pipeline, dirName string) ([]*types.FileMeta, error) {
+func (_mock *MockForge) Dir(ctx context.Context, u *model.Account, r *model.Repo, b *model.Pipeline, dirName string) ([]*types.FileMeta, error) {
 	ret := _mock.Called(ctx, u, r, b, dirName)
 
 	if len(ret) == 0 {
@@ -420,17 +420,17 @@ func (_mock *MockForge) Dir(ctx context.Context, u *model.User, r *model.Repo, b
 
 	var r0 []*types.FileMeta
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.User, *model.Repo, *model.Pipeline, string) ([]*types.FileMeta, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.Account, *model.Repo, *model.Pipeline, string) ([]*types.FileMeta, error)); ok {
 		return returnFunc(ctx, u, r, b, dirName)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.User, *model.Repo, *model.Pipeline, string) []*types.FileMeta); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.Account, *model.Repo, *model.Pipeline, string) []*types.FileMeta); ok {
 		r0 = returnFunc(ctx, u, r, b, dirName)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*types.FileMeta)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, *model.User, *model.Repo, *model.Pipeline, string) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(context.Context, *model.Account, *model.Repo, *model.Pipeline, string) error); ok {
 		r1 = returnFunc(ctx, u, r, b, dirName)
 	} else {
 		r1 = ret.Error(1)
@@ -453,15 +453,15 @@ func (_e *MockForge_Expecter) Dir(ctx interface{}, u interface{}, r interface{},
 	return &MockForge_Dir_Call{Call: _e.mock.On("Dir", ctx, u, r, b, dirName)}
 }
 
-func (_c *MockForge_Dir_Call) Run(run func(ctx context.Context, u *model.User, r *model.Repo, b *model.Pipeline, dirName string)) *MockForge_Dir_Call {
+func (_c *MockForge_Dir_Call) Run(run func(ctx context.Context, u *model.Account, r *model.Repo, b *model.Pipeline, dirName string)) *MockForge_Dir_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 *model.User
+		var arg1 *model.Account
 		if args[1] != nil {
-			arg1 = args[1].(*model.User)
+			arg1 = args[1].(*model.Account)
 		}
 		var arg2 *model.Repo
 		if args[2] != nil {
@@ -491,13 +491,13 @@ func (_c *MockForge_Dir_Call) Return(fileMetas []*types.FileMeta, err error) *Mo
 	return _c
 }
 
-func (_c *MockForge_Dir_Call) RunAndReturn(run func(ctx context.Context, u *model.User, r *model.Repo, b *model.Pipeline, dirName string) ([]*types.FileMeta, error)) *MockForge_Dir_Call {
+func (_c *MockForge_Dir_Call) RunAndReturn(run func(ctx context.Context, u *model.Account, r *model.Repo, b *model.Pipeline, dirName string) ([]*types.FileMeta, error)) *MockForge_Dir_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // File provides a mock function for the type MockForge
-func (_mock *MockForge) File(ctx context.Context, u *model.User, r *model.Repo, b *model.Pipeline, fileName string) ([]byte, error) {
+func (_mock *MockForge) File(ctx context.Context, u *model.Account, r *model.Repo, b *model.Pipeline, fileName string) ([]byte, error) {
 	ret := _mock.Called(ctx, u, r, b, fileName)
 
 	if len(ret) == 0 {
@@ -506,17 +506,17 @@ func (_mock *MockForge) File(ctx context.Context, u *model.User, r *model.Repo, 
 
 	var r0 []byte
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.User, *model.Repo, *model.Pipeline, string) ([]byte, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.Account, *model.Repo, *model.Pipeline, string) ([]byte, error)); ok {
 		return returnFunc(ctx, u, r, b, fileName)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.User, *model.Repo, *model.Pipeline, string) []byte); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.Account, *model.Repo, *model.Pipeline, string) []byte); ok {
 		r0 = returnFunc(ctx, u, r, b, fileName)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]byte)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, *model.User, *model.Repo, *model.Pipeline, string) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(context.Context, *model.Account, *model.Repo, *model.Pipeline, string) error); ok {
 		r1 = returnFunc(ctx, u, r, b, fileName)
 	} else {
 		r1 = ret.Error(1)
@@ -539,15 +539,15 @@ func (_e *MockForge_Expecter) File(ctx interface{}, u interface{}, r interface{}
 	return &MockForge_File_Call{Call: _e.mock.On("File", ctx, u, r, b, fileName)}
 }
 
-func (_c *MockForge_File_Call) Run(run func(ctx context.Context, u *model.User, r *model.Repo, b *model.Pipeline, fileName string)) *MockForge_File_Call {
+func (_c *MockForge_File_Call) Run(run func(ctx context.Context, u *model.Account, r *model.Repo, b *model.Pipeline, fileName string)) *MockForge_File_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 *model.User
+		var arg1 *model.Account
 		if args[1] != nil {
-			arg1 = args[1].(*model.User)
+			arg1 = args[1].(*model.Account)
 		}
 		var arg2 *model.Repo
 		if args[2] != nil {
@@ -577,7 +577,7 @@ func (_c *MockForge_File_Call) Return(bytes []byte, err error) *MockForge_File_C
 	return _c
 }
 
-func (_c *MockForge_File_Call) RunAndReturn(run func(ctx context.Context, u *model.User, r *model.Repo, b *model.Pipeline, fileName string) ([]byte, error)) *MockForge_File_Call {
+func (_c *MockForge_File_Call) RunAndReturn(run func(ctx context.Context, u *model.Account, r *model.Repo, b *model.Pipeline, fileName string) ([]byte, error)) *MockForge_File_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -659,24 +659,24 @@ func (_c *MockForge_Hook_Call) RunAndReturn(run func(ctx context.Context, r *htt
 }
 
 // Login provides a mock function for the type MockForge
-func (_mock *MockForge) Login(ctx context.Context, r *types.OAuthRequest) (*model.User, string, error) {
+func (_mock *MockForge) Login(ctx context.Context, r *types.OAuthRequest) (*model.Account, string, error) {
 	ret := _mock.Called(ctx, r)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Login")
 	}
 
-	var r0 *model.User
+	var r0 *model.Account
 	var r1 string
 	var r2 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *types.OAuthRequest) (*model.User, string, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *types.OAuthRequest) (*model.Account, string, error)); ok {
 		return returnFunc(ctx, r)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *types.OAuthRequest) *model.User); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *types.OAuthRequest) *model.Account); ok {
 		r0 = returnFunc(ctx, r)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*model.User)
+			r0 = ret.Get(0).(*model.Account)
 		}
 	}
 	if returnFunc, ok := ret.Get(1).(func(context.Context, *types.OAuthRequest) string); ok {
@@ -722,12 +722,12 @@ func (_c *MockForge_Login_Call) Run(run func(ctx context.Context, r *types.OAuth
 	return _c
 }
 
-func (_c *MockForge_Login_Call) Return(user *model.User, s string, err error) *MockForge_Login_Call {
+func (_c *MockForge_Login_Call) Return(user *model.Account, s string, err error) *MockForge_Login_Call {
 	_c.Call.Return(user, s, err)
 	return _c
 }
 
-func (_c *MockForge_Login_Call) RunAndReturn(run func(ctx context.Context, r *types.OAuthRequest) (*model.User, string, error)) *MockForge_Login_Call {
+func (_c *MockForge_Login_Call) RunAndReturn(run func(ctx context.Context, r *types.OAuthRequest) (*model.Account, string, error)) *MockForge_Login_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -777,7 +777,7 @@ func (_c *MockForge_Name_Call) RunAndReturn(run func() string) *MockForge_Name_C
 }
 
 // Netrc provides a mock function for the type MockForge
-func (_mock *MockForge) Netrc(u *model.User, r *model.Repo) (*model.Netrc, error) {
+func (_mock *MockForge) Netrc(u *model.Account, r *model.Repo) (*model.Netrc, error) {
 	ret := _mock.Called(u, r)
 
 	if len(ret) == 0 {
@@ -786,17 +786,17 @@ func (_mock *MockForge) Netrc(u *model.User, r *model.Repo) (*model.Netrc, error
 
 	var r0 *model.Netrc
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(*model.User, *model.Repo) (*model.Netrc, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(*model.Account, *model.Repo) (*model.Netrc, error)); ok {
 		return returnFunc(u, r)
 	}
-	if returnFunc, ok := ret.Get(0).(func(*model.User, *model.Repo) *model.Netrc); ok {
+	if returnFunc, ok := ret.Get(0).(func(*model.Account, *model.Repo) *model.Netrc); ok {
 		r0 = returnFunc(u, r)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*model.Netrc)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(*model.User, *model.Repo) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(*model.Account, *model.Repo) error); ok {
 		r1 = returnFunc(u, r)
 	} else {
 		r1 = ret.Error(1)
@@ -816,11 +816,11 @@ func (_e *MockForge_Expecter) Netrc(u interface{}, r interface{}) *MockForge_Net
 	return &MockForge_Netrc_Call{Call: _e.mock.On("Netrc", u, r)}
 }
 
-func (_c *MockForge_Netrc_Call) Run(run func(u *model.User, r *model.Repo)) *MockForge_Netrc_Call {
+func (_c *MockForge_Netrc_Call) Run(run func(u *model.Account, r *model.Repo)) *MockForge_Netrc_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 *model.User
+		var arg0 *model.Account
 		if args[0] != nil {
-			arg0 = args[0].(*model.User)
+			arg0 = args[0].(*model.Account)
 		}
 		var arg1 *model.Repo
 		if args[1] != nil {
@@ -839,13 +839,13 @@ func (_c *MockForge_Netrc_Call) Return(netrc *model.Netrc, err error) *MockForge
 	return _c
 }
 
-func (_c *MockForge_Netrc_Call) RunAndReturn(run func(u *model.User, r *model.Repo) (*model.Netrc, error)) *MockForge_Netrc_Call {
+func (_c *MockForge_Netrc_Call) RunAndReturn(run func(u *model.Account, r *model.Repo) (*model.Netrc, error)) *MockForge_Netrc_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // Org provides a mock function for the type MockForge
-func (_mock *MockForge) Org(ctx context.Context, u *model.User, org string) (*model.Org, error) {
+func (_mock *MockForge) Org(ctx context.Context, u *model.Account, org string) (*model.Org, error) {
 	ret := _mock.Called(ctx, u, org)
 
 	if len(ret) == 0 {
@@ -854,17 +854,17 @@ func (_mock *MockForge) Org(ctx context.Context, u *model.User, org string) (*mo
 
 	var r0 *model.Org
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.User, string) (*model.Org, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.Account, string) (*model.Org, error)); ok {
 		return returnFunc(ctx, u, org)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.User, string) *model.Org); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.Account, string) *model.Org); ok {
 		r0 = returnFunc(ctx, u, org)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*model.Org)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, *model.User, string) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(context.Context, *model.Account, string) error); ok {
 		r1 = returnFunc(ctx, u, org)
 	} else {
 		r1 = ret.Error(1)
@@ -885,15 +885,15 @@ func (_e *MockForge_Expecter) Org(ctx interface{}, u interface{}, org interface{
 	return &MockForge_Org_Call{Call: _e.mock.On("Org", ctx, u, org)}
 }
 
-func (_c *MockForge_Org_Call) Run(run func(ctx context.Context, u *model.User, org string)) *MockForge_Org_Call {
+func (_c *MockForge_Org_Call) Run(run func(ctx context.Context, u *model.Account, org string)) *MockForge_Org_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 *model.User
+		var arg1 *model.Account
 		if args[1] != nil {
-			arg1 = args[1].(*model.User)
+			arg1 = args[1].(*model.Account)
 		}
 		var arg2 string
 		if args[2] != nil {
@@ -913,13 +913,13 @@ func (_c *MockForge_Org_Call) Return(org1 *model.Org, err error) *MockForge_Org_
 	return _c
 }
 
-func (_c *MockForge_Org_Call) RunAndReturn(run func(ctx context.Context, u *model.User, org string) (*model.Org, error)) *MockForge_Org_Call {
+func (_c *MockForge_Org_Call) RunAndReturn(run func(ctx context.Context, u *model.Account, org string) (*model.Org, error)) *MockForge_Org_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // OrgMembership provides a mock function for the type MockForge
-func (_mock *MockForge) OrgMembership(ctx context.Context, u *model.User, org string) (*model.OrgPerm, error) {
+func (_mock *MockForge) OrgMembership(ctx context.Context, u *model.Account, org string) (*model.OrgPerm, error) {
 	ret := _mock.Called(ctx, u, org)
 
 	if len(ret) == 0 {
@@ -928,17 +928,17 @@ func (_mock *MockForge) OrgMembership(ctx context.Context, u *model.User, org st
 
 	var r0 *model.OrgPerm
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.User, string) (*model.OrgPerm, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.Account, string) (*model.OrgPerm, error)); ok {
 		return returnFunc(ctx, u, org)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.User, string) *model.OrgPerm); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.Account, string) *model.OrgPerm); ok {
 		r0 = returnFunc(ctx, u, org)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*model.OrgPerm)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, *model.User, string) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(context.Context, *model.Account, string) error); ok {
 		r1 = returnFunc(ctx, u, org)
 	} else {
 		r1 = ret.Error(1)
@@ -959,15 +959,15 @@ func (_e *MockForge_Expecter) OrgMembership(ctx interface{}, u interface{}, org 
 	return &MockForge_OrgMembership_Call{Call: _e.mock.On("OrgMembership", ctx, u, org)}
 }
 
-func (_c *MockForge_OrgMembership_Call) Run(run func(ctx context.Context, u *model.User, org string)) *MockForge_OrgMembership_Call {
+func (_c *MockForge_OrgMembership_Call) Run(run func(ctx context.Context, u *model.Account, org string)) *MockForge_OrgMembership_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 *model.User
+		var arg1 *model.Account
 		if args[1] != nil {
-			arg1 = args[1].(*model.User)
+			arg1 = args[1].(*model.Account)
 		}
 		var arg2 string
 		if args[2] != nil {
@@ -987,13 +987,13 @@ func (_c *MockForge_OrgMembership_Call) Return(orgPerm *model.OrgPerm, err error
 	return _c
 }
 
-func (_c *MockForge_OrgMembership_Call) RunAndReturn(run func(ctx context.Context, u *model.User, org string) (*model.OrgPerm, error)) *MockForge_OrgMembership_Call {
+func (_c *MockForge_OrgMembership_Call) RunAndReturn(run func(ctx context.Context, u *model.Account, org string) (*model.OrgPerm, error)) *MockForge_OrgMembership_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // PullRequests provides a mock function for the type MockForge
-func (_mock *MockForge) PullRequests(ctx context.Context, u *model.User, r *model.Repo, p *model.ListOptions) ([]*model.PullRequest, error) {
+func (_mock *MockForge) PullRequests(ctx context.Context, u *model.Account, r *model.Repo, p *model.ListOptions) ([]*model.PullRequest, error) {
 	ret := _mock.Called(ctx, u, r, p)
 
 	if len(ret) == 0 {
@@ -1002,17 +1002,17 @@ func (_mock *MockForge) PullRequests(ctx context.Context, u *model.User, r *mode
 
 	var r0 []*model.PullRequest
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.User, *model.Repo, *model.ListOptions) ([]*model.PullRequest, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.Account, *model.Repo, *model.ListOptions) ([]*model.PullRequest, error)); ok {
 		return returnFunc(ctx, u, r, p)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.User, *model.Repo, *model.ListOptions) []*model.PullRequest); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.Account, *model.Repo, *model.ListOptions) []*model.PullRequest); ok {
 		r0 = returnFunc(ctx, u, r, p)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*model.PullRequest)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, *model.User, *model.Repo, *model.ListOptions) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(context.Context, *model.Account, *model.Repo, *model.ListOptions) error); ok {
 		r1 = returnFunc(ctx, u, r, p)
 	} else {
 		r1 = ret.Error(1)
@@ -1034,15 +1034,15 @@ func (_e *MockForge_Expecter) PullRequests(ctx interface{}, u interface{}, r int
 	return &MockForge_PullRequests_Call{Call: _e.mock.On("PullRequests", ctx, u, r, p)}
 }
 
-func (_c *MockForge_PullRequests_Call) Run(run func(ctx context.Context, u *model.User, r *model.Repo, p *model.ListOptions)) *MockForge_PullRequests_Call {
+func (_c *MockForge_PullRequests_Call) Run(run func(ctx context.Context, u *model.Account, r *model.Repo, p *model.ListOptions)) *MockForge_PullRequests_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 *model.User
+		var arg1 *model.Account
 		if args[1] != nil {
-			arg1 = args[1].(*model.User)
+			arg1 = args[1].(*model.Account)
 		}
 		var arg2 *model.Repo
 		if args[2] != nil {
@@ -1067,13 +1067,13 @@ func (_c *MockForge_PullRequests_Call) Return(pullRequests []*model.PullRequest,
 	return _c
 }
 
-func (_c *MockForge_PullRequests_Call) RunAndReturn(run func(ctx context.Context, u *model.User, r *model.Repo, p *model.ListOptions) ([]*model.PullRequest, error)) *MockForge_PullRequests_Call {
+func (_c *MockForge_PullRequests_Call) RunAndReturn(run func(ctx context.Context, u *model.Account, r *model.Repo, p *model.ListOptions) ([]*model.PullRequest, error)) *MockForge_PullRequests_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // Repo provides a mock function for the type MockForge
-func (_mock *MockForge) Repo(ctx context.Context, u *model.User, remoteID model.ForgeRemoteID, owner string, name string) (*model.Repo, error) {
+func (_mock *MockForge) Repo(ctx context.Context, u *model.Account, remoteID model.ForgeRemoteID, owner string, name string) (*model.Repo, error) {
 	ret := _mock.Called(ctx, u, remoteID, owner, name)
 
 	if len(ret) == 0 {
@@ -1082,17 +1082,17 @@ func (_mock *MockForge) Repo(ctx context.Context, u *model.User, remoteID model.
 
 	var r0 *model.Repo
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.User, model.ForgeRemoteID, string, string) (*model.Repo, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.Account, model.ForgeRemoteID, string, string) (*model.Repo, error)); ok {
 		return returnFunc(ctx, u, remoteID, owner, name)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.User, model.ForgeRemoteID, string, string) *model.Repo); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.Account, model.ForgeRemoteID, string, string) *model.Repo); ok {
 		r0 = returnFunc(ctx, u, remoteID, owner, name)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*model.Repo)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, *model.User, model.ForgeRemoteID, string, string) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(context.Context, *model.Account, model.ForgeRemoteID, string, string) error); ok {
 		r1 = returnFunc(ctx, u, remoteID, owner, name)
 	} else {
 		r1 = ret.Error(1)
@@ -1115,15 +1115,15 @@ func (_e *MockForge_Expecter) Repo(ctx interface{}, u interface{}, remoteID inte
 	return &MockForge_Repo_Call{Call: _e.mock.On("Repo", ctx, u, remoteID, owner, name)}
 }
 
-func (_c *MockForge_Repo_Call) Run(run func(ctx context.Context, u *model.User, remoteID model.ForgeRemoteID, owner string, name string)) *MockForge_Repo_Call {
+func (_c *MockForge_Repo_Call) Run(run func(ctx context.Context, u *model.Account, remoteID model.ForgeRemoteID, owner string, name string)) *MockForge_Repo_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 *model.User
+		var arg1 *model.Account
 		if args[1] != nil {
-			arg1 = args[1].(*model.User)
+			arg1 = args[1].(*model.Account)
 		}
 		var arg2 model.ForgeRemoteID
 		if args[2] != nil {
@@ -1153,13 +1153,13 @@ func (_c *MockForge_Repo_Call) Return(repo *model.Repo, err error) *MockForge_Re
 	return _c
 }
 
-func (_c *MockForge_Repo_Call) RunAndReturn(run func(ctx context.Context, u *model.User, remoteID model.ForgeRemoteID, owner string, name string) (*model.Repo, error)) *MockForge_Repo_Call {
+func (_c *MockForge_Repo_Call) RunAndReturn(run func(ctx context.Context, u *model.Account, remoteID model.ForgeRemoteID, owner string, name string) (*model.Repo, error)) *MockForge_Repo_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // Repos provides a mock function for the type MockForge
-func (_mock *MockForge) Repos(ctx context.Context, u *model.User, p *model.ListOptions) ([]*model.Repo, error) {
+func (_mock *MockForge) Repos(ctx context.Context, u *model.Account, p *model.ListOptions) ([]*model.Repo, error) {
 	ret := _mock.Called(ctx, u, p)
 
 	if len(ret) == 0 {
@@ -1168,17 +1168,17 @@ func (_mock *MockForge) Repos(ctx context.Context, u *model.User, p *model.ListO
 
 	var r0 []*model.Repo
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.User, *model.ListOptions) ([]*model.Repo, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.Account, *model.ListOptions) ([]*model.Repo, error)); ok {
 		return returnFunc(ctx, u, p)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.User, *model.ListOptions) []*model.Repo); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.Account, *model.ListOptions) []*model.Repo); ok {
 		r0 = returnFunc(ctx, u, p)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*model.Repo)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, *model.User, *model.ListOptions) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(context.Context, *model.Account, *model.ListOptions) error); ok {
 		r1 = returnFunc(ctx, u, p)
 	} else {
 		r1 = ret.Error(1)
@@ -1199,15 +1199,15 @@ func (_e *MockForge_Expecter) Repos(ctx interface{}, u interface{}, p interface{
 	return &MockForge_Repos_Call{Call: _e.mock.On("Repos", ctx, u, p)}
 }
 
-func (_c *MockForge_Repos_Call) Run(run func(ctx context.Context, u *model.User, p *model.ListOptions)) *MockForge_Repos_Call {
+func (_c *MockForge_Repos_Call) Run(run func(ctx context.Context, u *model.Account, p *model.ListOptions)) *MockForge_Repos_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 *model.User
+		var arg1 *model.Account
 		if args[1] != nil {
-			arg1 = args[1].(*model.User)
+			arg1 = args[1].(*model.Account)
 		}
 		var arg2 *model.ListOptions
 		if args[2] != nil {
@@ -1227,13 +1227,13 @@ func (_c *MockForge_Repos_Call) Return(repos []*model.Repo, err error) *MockForg
 	return _c
 }
 
-func (_c *MockForge_Repos_Call) RunAndReturn(run func(ctx context.Context, u *model.User, p *model.ListOptions) ([]*model.Repo, error)) *MockForge_Repos_Call {
+func (_c *MockForge_Repos_Call) RunAndReturn(run func(ctx context.Context, u *model.Account, p *model.ListOptions) ([]*model.Repo, error)) *MockForge_Repos_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // Status provides a mock function for the type MockForge
-func (_mock *MockForge) Status(ctx context.Context, u *model.User, r *model.Repo, b *model.Pipeline, p *model.Workflow) error {
+func (_mock *MockForge) Status(ctx context.Context, u *model.Account, r *model.Repo, b *model.Pipeline, p *model.Workflow) error {
 	ret := _mock.Called(ctx, u, r, b, p)
 
 	if len(ret) == 0 {
@@ -1241,7 +1241,7 @@ func (_mock *MockForge) Status(ctx context.Context, u *model.User, r *model.Repo
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.User, *model.Repo, *model.Pipeline, *model.Workflow) error); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.Account, *model.Repo, *model.Pipeline, *model.Workflow) error); ok {
 		r0 = returnFunc(ctx, u, r, b, p)
 	} else {
 		r0 = ret.Error(0)
@@ -1264,15 +1264,15 @@ func (_e *MockForge_Expecter) Status(ctx interface{}, u interface{}, r interface
 	return &MockForge_Status_Call{Call: _e.mock.On("Status", ctx, u, r, b, p)}
 }
 
-func (_c *MockForge_Status_Call) Run(run func(ctx context.Context, u *model.User, r *model.Repo, b *model.Pipeline, p *model.Workflow)) *MockForge_Status_Call {
+func (_c *MockForge_Status_Call) Run(run func(ctx context.Context, u *model.Account, r *model.Repo, b *model.Pipeline, p *model.Workflow)) *MockForge_Status_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 *model.User
+		var arg1 *model.Account
 		if args[1] != nil {
-			arg1 = args[1].(*model.User)
+			arg1 = args[1].(*model.Account)
 		}
 		var arg2 *model.Repo
 		if args[2] != nil {
@@ -1302,13 +1302,13 @@ func (_c *MockForge_Status_Call) Return(err error) *MockForge_Status_Call {
 	return _c
 }
 
-func (_c *MockForge_Status_Call) RunAndReturn(run func(ctx context.Context, u *model.User, r *model.Repo, b *model.Pipeline, p *model.Workflow) error) *MockForge_Status_Call {
+func (_c *MockForge_Status_Call) RunAndReturn(run func(ctx context.Context, u *model.Account, r *model.Repo, b *model.Pipeline, p *model.Workflow) error) *MockForge_Status_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // Teams provides a mock function for the type MockForge
-func (_mock *MockForge) Teams(ctx context.Context, u *model.User, p *model.ListOptions) ([]*model.Team, error) {
+func (_mock *MockForge) Teams(ctx context.Context, u *model.Account, p *model.ListOptions) ([]*model.Team, error) {
 	ret := _mock.Called(ctx, u, p)
 
 	if len(ret) == 0 {
@@ -1317,17 +1317,17 @@ func (_mock *MockForge) Teams(ctx context.Context, u *model.User, p *model.ListO
 
 	var r0 []*model.Team
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.User, *model.ListOptions) ([]*model.Team, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.Account, *model.ListOptions) ([]*model.Team, error)); ok {
 		return returnFunc(ctx, u, p)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.User, *model.ListOptions) []*model.Team); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *model.Account, *model.ListOptions) []*model.Team); ok {
 		r0 = returnFunc(ctx, u, p)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*model.Team)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, *model.User, *model.ListOptions) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(context.Context, *model.Account, *model.ListOptions) error); ok {
 		r1 = returnFunc(ctx, u, p)
 	} else {
 		r1 = ret.Error(1)
@@ -1348,15 +1348,15 @@ func (_e *MockForge_Expecter) Teams(ctx interface{}, u interface{}, p interface{
 	return &MockForge_Teams_Call{Call: _e.mock.On("Teams", ctx, u, p)}
 }
 
-func (_c *MockForge_Teams_Call) Run(run func(ctx context.Context, u *model.User, p *model.ListOptions)) *MockForge_Teams_Call {
+func (_c *MockForge_Teams_Call) Run(run func(ctx context.Context, u *model.Account, p *model.ListOptions)) *MockForge_Teams_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 *model.User
+		var arg1 *model.Account
 		if args[1] != nil {
-			arg1 = args[1].(*model.User)
+			arg1 = args[1].(*model.Account)
 		}
 		var arg2 *model.ListOptions
 		if args[2] != nil {
@@ -1376,7 +1376,7 @@ func (_c *MockForge_Teams_Call) Return(teams []*model.Team, err error) *MockForg
 	return _c
 }
 
-func (_c *MockForge_Teams_Call) RunAndReturn(run func(ctx context.Context, u *model.User, p *model.ListOptions) ([]*model.Team, error)) *MockForge_Teams_Call {
+func (_c *MockForge_Teams_Call) RunAndReturn(run func(ctx context.Context, u *model.Account, p *model.ListOptions) ([]*model.Team, error)) *MockForge_Teams_Call {
 	_c.Call.Return(run)
 	return _c
 }
